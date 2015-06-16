@@ -55,8 +55,8 @@
             android:id="@+id/button4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getContacts"
-            android:text="Roxy #1" />
+            android:onClick="setupBluetooth"
+            android:text="SETUP BLUETOOTH" />
 
         <Button
             android:id="@+id/button5"

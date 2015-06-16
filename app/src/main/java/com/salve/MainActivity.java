@@ -1,5 +1,7 @@
 package com.salve;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -15,7 +17,7 @@ import com.salve.contacts.AccountUtils;
 public class MainActivity extends ActionBarActivity {
 
     private BandUtils bandUtils;
-
+    private static final int REQUEST_ENABLE_BT = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +61,30 @@ public class MainActivity extends ActionBarActivity {
     public void getContacts(View view) {
 
         AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(this);
+
+    }
+    public void setupBluetooth(View view){
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Log.e("BLUETOOTH",": Device does not support Bluetooth");
+        }
+        else if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
+
+    }
+    protected void onActivityResult (int requestCode, int resultCode, Intent data){
+        if(requestCode == REQUEST_ENABLE_BT){
+            if(resultCode == RESULT_OK){
+                Log.e("BLUETOOTH", "I AM CONNECTED");
+            }
+            else if (resultCode == RESULT_CANCELED){
+                Log.e("BLUETOOTH", "I AM NOOOOOT CONNECTED");
+            }
+        }
 
     }
 }
