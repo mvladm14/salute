@@ -1,1 +1,6 @@
 *.class
+*.bin
+build
+.build
+.idea
+app
