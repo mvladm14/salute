@@ -7,18 +7,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.microsoft.band.BandClient;
-import com.microsoft.band.BandClientManager;
-import com.microsoft.band.BandException;
-import com.microsoft.band.BandIOException;
-import com.microsoft.band.BandInfo;
-import com.microsoft.band.BandPendingResult;
-import com.microsoft.band.ConnectionState;
-
+import com.salve.band.BandUtils;
+import com.salve.band.BandVersionType;
 import com.salve.contacts.AccountUtils;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private BandUtils bandUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,58 +45,15 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void addUrl(View view) {
-        BandInfo[] pairedBands = BandClientManager.getInstance().getPairedBands();
-        final BandClient bandClient = BandClientManager.getInstance().create(this, pairedBands[0]);
+    public void connect(View view) {
 
-        // Note: the BandPendingResult.await() method must be called from a background thread.
-        // An exception will be thrown if called from the UI thread.
-        final BandPendingResult<ConnectionState> pendingResult =
-                bandClient.connect();
+        bandUtils = new BandUtils(this);
+        bandUtils.connect();
 
+    }
 
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    ConnectionState state = pendingResult.await();
-                    if (state == ConnectionState.CONNECTED) {
-                        String fwVersion = null;
-                        String hwVersion = null;
-                        try {
-                            BandPendingResult<String> pendingResult =
-                                    bandClient.getFirmwareVersion();
-                            fwVersion = pendingResult.await();
-                            pendingResult = bandClient.getHardwareVersion();
-                            hwVersion = pendingResult.await();
-                            Log.e("RRR", fwVersion + " " + hwVersion);
-                            // do work related to Band firmware & hardware versions
-                        } catch (InterruptedException ex) {
-                            // handle InterruptedException
-                            ex.printStackTrace();
-                        } catch (BandIOException ex) {
-                            // handle BandIOException
-                            ex.printStackTrace();
-                        } catch (BandException ex) {
-                            // handle BandException
-                            ex.printStackTrace();
-                        }
-                        // do work on success
-                    } else {
-                        // do work on failure
-                    }
-                } catch (InterruptedException ex) {
-                    // handle InterruptedException
-                    ex.printStackTrace();
-                } catch (BandException ex) {
-                    // handle BandException
-                    ex.printStackTrace();
-                }
-            }
-        }).start();
-
-
+    public void getVersion(View view) {
+        bandUtils.retrieveVersion(BandVersionType.FIRMWARE);
     }
 
     public void getContacts(View view) {

@@ -27,21 +27,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="getContacts"
-            android:text="Vlad #1" />
+            android:text="Vlad #1 - get contacts" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getContacts"
-            android:text="Vlad #2" />
+            android:onClick="connect"
+            android:text="Vlad #2 - connect to band" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getContacts"
-            android:text="Vlad #3" />
+            android:onClick="getVersion"
+            android:text="Vlad #3 - get band version" />
 
         <EditText
             android:id="@+id/url2"
