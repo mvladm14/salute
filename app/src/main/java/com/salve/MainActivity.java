@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
@@ -15,6 +14,8 @@ import com.microsoft.band.BandIOException;
 import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
+
+import com.salve.contacts.AccountUtils;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -99,6 +100,12 @@ public class MainActivity extends ActionBarActivity {
             }
         }).start();
 
+
+    }
+
+    public void getContacts(View view) {
+
+        AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(this);
 
     }
 }
