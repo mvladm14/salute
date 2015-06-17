@@ -9,6 +9,12 @@ import com.microsoft.band.BandIOException;
 import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
+import com.microsoft.band.sensors.BandAccelerometerEventListener;
+import com.microsoft.band.sensors.BandGyroscopeEventListener;
+import com.microsoft.band.sensors.SampleRate;
+import com.salve.band.eventlisteneres.BandAccelerometerEventListenerImpl;
+import com.salve.band.eventlisteneres.BandGyroscopeEventListenerImpl;
+import com.salve.band.sensor.registration.SensorRegistrationManager;
 import com.salve.band.tasks.AsyncResponse;
 import com.salve.band.tasks.BandConnectionTask;
 import com.salve.band.tasks.BandVersionTask;
@@ -25,11 +31,12 @@ public class BandUtils implements AsyncResponse {
     private BandPendingResult<ConnectionState> pendingResult;
     private ConnectionState state;
     private String version;
+    private SensorRegistrationManager sensorRegistrationManager;
 
     public BandUtils(Context context) {
-        this.state = ConnectionState.UNBOUND;
         pairedBands = BandClientManager.getInstance().getPairedBands();
         bandClient = BandClientManager.getInstance().create(context, pairedBands[0]);
+        sensorRegistrationManager = new SensorRegistrationManager(bandClient);
     }
 
     public void connect() {
@@ -69,12 +76,20 @@ public class BandUtils implements AsyncResponse {
     @Override
     public void onFinishedConnection(ConnectionState connectionState) {
         this.state = connectionState;
-        Log.e("CONNEXION_STATE",state.toString());
+        Log.e("CONNEXION_STATE", state.toString());
     }
 
     @Override
     public void onFinishedVersion(String version) {
         this.version = version;
-        Log.e("VERSION",version.toString());
+        Log.e("VERSION", version.toString());
+    }
+
+    public void registerAccelerometerListener() {
+        sensorRegistrationManager.registerAccelerometerListener();
+    }
+
+    public void registerGyroscopeListener() {
+       sensorRegistrationManager.registerGyroscopeListener();
     }
 }

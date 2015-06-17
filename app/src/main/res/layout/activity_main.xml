@@ -40,7 +40,7 @@
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getVersion"
+            android:onClick="registerAccelerometerListener"
             android:text="Vlad #3 - get band version" />
 
         <EditText

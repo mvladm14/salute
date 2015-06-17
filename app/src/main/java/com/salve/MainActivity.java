@@ -63,6 +63,11 @@ public class MainActivity extends ActionBarActivity {
         AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(this);
 
     }
+
+    public void registerAccelerometerListener(View view) {
+        bandUtils.registerAccelerometerListener();
+    }
+
     public void setupBluetooth(View view){
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
