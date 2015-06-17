@@ -1,4 +1,4 @@
-package com.salve.band.sensor.registration;
+package com.salve.band.sensors.registration;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandIOException;
@@ -28,7 +28,7 @@ public class SensorRegistrationManager {
             // register the listener
             bandClient.getSensorManager().registerAccelerometerEventListener(
                     this.bandAccelerometerEventListener,
-                    SampleRate.MS32);
+                    SampleRate.MS16);
         } catch (BandIOException ex) {
             // handle BandException
             ex.printStackTrace();

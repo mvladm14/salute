@@ -9,8 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.salve.band.BandUtils;
-import com.salve.band.BandVersionType;
+import com.salve.band.utils.BandUtils;
+import com.salve.band.utils.BandVersionType;
 import com.salve.contacts.AccountUtils;
 
 
@@ -44,6 +44,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroy() {
+        bandUtils.unregisterAccelerometerListener();
+        //bandUtils.unregisterGyroscopeListener();
     }
 
 

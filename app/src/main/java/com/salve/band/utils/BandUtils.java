@@ -1,4 +1,4 @@
-package com.salve.band;
+package com.salve.band.utils;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,12 +9,7 @@ import com.microsoft.band.BandIOException;
 import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
-import com.microsoft.band.sensors.BandAccelerometerEventListener;
-import com.microsoft.band.sensors.BandGyroscopeEventListener;
-import com.microsoft.band.sensors.SampleRate;
-import com.salve.band.eventlisteneres.BandAccelerometerEventListenerImpl;
-import com.salve.band.eventlisteneres.BandGyroscopeEventListenerImpl;
-import com.salve.band.sensor.registration.SensorRegistrationManager;
+import com.salve.band.sensors.registration.SensorRegistrationManager;
 import com.salve.band.tasks.AsyncResponse;
 import com.salve.band.tasks.BandConnectionTask;
 import com.salve.band.tasks.BandVersionTask;
@@ -86,10 +81,18 @@ public class BandUtils implements AsyncResponse {
     }
 
     public void registerAccelerometerListener() {
-        sensorRegistrationManager.registerAccelerometerListener();
-    }
+            sensorRegistrationManager.registerAccelerometerListener();
+        }
 
     public void registerGyroscopeListener() {
-       sensorRegistrationManager.registerGyroscopeListener();
+        sensorRegistrationManager.registerGyroscopeListener();
+    }
+
+    public void unregisterAccelerometerListener() {
+        sensorRegistrationManager.unregisterAccelerometerListener();
+    }
+
+    public void unregisterGyroscopeListener() {
+        sensorRegistrationManager.unregisterGyroscopeListener();
     }
 }
