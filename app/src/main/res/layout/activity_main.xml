@@ -62,15 +62,15 @@
             android:id="@+id/button5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getContacts"
-            android:text="Roxy #2" />
+            android:onClick="queryPairedDevices"
+            android:text="get paired devices" />
 
         <Button
             android:id="@+id/button6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getContacts"
-            android:text="Roxy #3" />
+            android:onClick="discoverDevices"
+            android:text="discover devices" />
     </LinearLayout>
 
 

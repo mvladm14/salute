@@ -2,6 +2,7 @@ package com.salve;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,17 +20,20 @@ import com.salve.band.utils.BandVersionType;
 import com.salve.contacts.AccountUtils;
 
 import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.UUID;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private BandUtils bandUtils;
     private static final int REQUEST_ENABLE_BT = 1;
-
+    private BluetoothAdapter mBluetoothAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     @Override
@@ -50,17 +54,9 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDestroy() {
-        bandUtils.unregisterAccelerometerListener();
-        //bandUtils.unregisterGyroscopeListener();
-        bandUtils.disconnect();
-        super.onDestroy();
-    }
 
 
     public void connect(View view) {
@@ -75,18 +71,16 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void getContacts(View view) {
-
         AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(this);
 
     }
-
 
     public void registerAccelerometerListener(View view) {
         bandUtils.registerAccelerometerListener();
     }
 
     public void setupBluetooth(View view) {
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         if (mBluetoothAdapter == null) {
             Log.e("BLUETOOTH", ": Device does not support Bluetooth");
         } else if (!mBluetoothAdapter.isEnabled()) {
@@ -103,43 +97,58 @@ public class MainActivity extends ActionBarActivity {
                 Log.e("BLUETOOTH", "I AM NOOOOOT CONNECTED");
             }
         }
-
     }
-
-    private void PairDevice(BluetoothDevice pDevice, String pin) {
-        try {
-            Log.d("pairDevice()", "Start Pairing...");
-
-            Method pairMethod = pDevice.getClass().getMethod("setPin", byte[].class);
-            Boolean lReturn = (Boolean) pairMethod.invoke(pDevice, pin.getBytes("UTF8"));
-
-            if (lReturn.booleanValue()) {
-                Log.d("pairDevice()", "Pairing Finished...");
-
-                Method bondMethod = pDevice.getClass().getMethod("createBond");
-                bondMethod.invoke(pDevice);
+    public void queryPairedDevices(View view) {
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        String[] devices = new String[5];
+        ArrayAdapter mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, devices);
+        // If there are paired devices
+        if (pairedDevices.size() > 0) {
+            // Loop through paired devices
+            for (BluetoothDevice device : pairedDevices) {
+                // Add the name and address to an array adapter to show in a ListView
+               // mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                Log.e("BLUETOOTH", device.getName() + "\n" + device.getAddress());
             }
-        } catch (Exception ex) {
-            Log.e("pairDevice()", ex.getMessage());
+
         }
+
+    }
+    // Create a BroadcastReceiver for ACTION_FOUND
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                Log.e("BLUETOOTH", device.getName() + "\n" + device.getAddress());
+
+            }
+        }
+    };
+    public void discoverDevices(View view){
+        if(mBluetoothAdapter.startDiscovery()){
+            // Register the BroadcastReceiver
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+        }
+
     }
 
-    public void getPairedDevices() {
-        // Create a BroadcastReceiver for ACTION_FOUND
-         final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                // When discovery finds a device
-                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    // Get the BluetoothDevice object from the Intent
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    // Add the name and address to an array adapter to show in a ListView
-                    //new ArrayAdapter().add(device.getName() + "\n" + device.getAddress());
-                }
-            }
-        };
-        // Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bandUtils.unregisterAccelerometerListener();
+        //bandUtils.unregisterGyroscopeListener();
+        bandUtils.disconnect();
+        unregisterReceiver(mReceiver);
+        mBluetoothAdapter.cancelDiscovery();
+
     }
+
+
 }
