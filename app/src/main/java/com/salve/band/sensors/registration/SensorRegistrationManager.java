@@ -1,5 +1,7 @@
 package com.salve.band.sensors.registration;
 
+import android.util.Log;
+
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandIOException;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
@@ -12,6 +14,8 @@ import com.salve.band.eventlisteneres.BandGyroscopeEventListenerImpl;
  * Created by Vlad on 6/17/2015.
  */
 public class SensorRegistrationManager {
+
+    private static final String TAG = "SRManager";
 
     private BandClient bandClient;
     private BandAccelerometerEventListener bandAccelerometerEventListener;
@@ -28,7 +32,8 @@ public class SensorRegistrationManager {
             // register the listener
             bandClient.getSensorManager().registerAccelerometerEventListener(
                     this.bandAccelerometerEventListener,
-                    SampleRate.MS16);
+                    SampleRate.MS128);
+            Log.e(TAG, "Accelerometer registered successfully.");
         } catch (BandIOException ex) {
             // handle BandException
             ex.printStackTrace();
@@ -39,6 +44,7 @@ public class SensorRegistrationManager {
         try {
             // register the listener
             bandClient.getSensorManager().unregisterAccelerometerEventListener(this.bandAccelerometerEventListener);
+            Log.e(TAG, "Accelerometer unregistered successfully.");
         } catch (BandIOException ex) {
             // handle BandException
             ex.printStackTrace();
@@ -50,7 +56,7 @@ public class SensorRegistrationManager {
             // register the listener
             bandClient.getSensorManager().registerGyroscopeEventListener(
                     this.bandGyroscopeEventListener,
-                    SampleRate.MS32);
+                    SampleRate.MS128);
 
         } catch (BandIOException ex) {
             // handle BandException

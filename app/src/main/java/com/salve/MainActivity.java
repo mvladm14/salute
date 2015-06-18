@@ -50,6 +50,8 @@ public class MainActivity extends ActionBarActivity {
     public void onDestroy() {
         bandUtils.unregisterAccelerometerListener();
         //bandUtils.unregisterGyroscopeListener();
+        bandUtils.disconnect();
+        super.onDestroy();
     }
 
 

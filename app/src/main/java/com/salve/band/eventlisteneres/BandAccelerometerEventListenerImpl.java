@@ -14,14 +14,18 @@ import com.salve.gestures.recognition.RecognitionEngine;
  * Created by Vlad on 6/17/2015.
  */
 public class BandAccelerometerEventListenerImpl implements BandAccelerometerEventListener {
+
+    public BandAccelerometerEventListenerImpl() {
+        Log.e("CACAT", "CACAT");
+    }
+
+    private Gesture lastGesture;
+
     private long lastUpdate;
-    private float last_x;
     private float last_y;
-    private float last_z;
 
     @Override
     public void onBandAccelerometerChanged(BandAccelerometerEvent bandAccelerometerEvent) {
-
         Accelerometer accelerometer = new Accelerometer.AccelerometerBuilder()
                 .withX(bandAccelerometerEvent.getAccelerationX())
                 .withY(bandAccelerometerEvent.getAccelerationY())
@@ -32,28 +36,22 @@ public class BandAccelerometerEventListenerImpl implements BandAccelerometerEven
 
         long curTime = bandAccelerometerEvent.getTimestamp();
 
-        Gesture gesture = RecognitionEngine.identifyGesture(accelerometer);
+        Gesture currentGesture = RecognitionEngine.identifyGesture(accelerometer);
 
-        if ((curTime - lastUpdate) > 100 && gesture != null && gesture instanceof StationaryHandShakeLeftHand) {
+        if ((curTime - lastUpdate) > 100 && lastGesture != null && lastGesture instanceof StationaryHandShakeLeftHand) {
             long diffTime = (curTime - lastUpdate);
             lastUpdate = curTime;
 
-            float speed = Math.abs(bandAccelerometerEvent.getAccelerationX() +
-                    bandAccelerometerEvent.getAccelerationY() +
-                    bandAccelerometerEvent.getAccelerationZ() -
-                    last_x -
-                    last_y -
-                    last_z) /
-                    diffTime * 10000;
+            float speed = Math.abs(bandAccelerometerEvent.getAccelerationY() - last_y) / diffTime * 10000;
 
             Log.e("SPEED", speed + " ");
-            if (speed > HandShake.SHAKE_THRESHOLD) {
+            if (speed > HandShake.SHAKE_THRESHOLD && !Float.isInfinite(speed)) {
                 Log.e("GOOOOOD", "shake");
             }
 
-            last_x = bandAccelerometerEvent.getAccelerationX();
             last_y = bandAccelerometerEvent.getAccelerationY();
-            last_z = bandAccelerometerEvent.getAccelerationZ();
         }
+        lastGesture = currentGesture;
+        Log.e("GESTURE", lastGesture != null ? lastGesture.toString() : "NULL" + accelerometer.toString());
     }
 }

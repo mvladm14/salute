@@ -77,7 +77,6 @@ public class BandUtils implements AsyncResponse {
     @Override
     public void onFinishedVersion(String version) {
         this.version = version;
-        Log.e("VERSION", version.toString());
     }
 
     public void registerAccelerometerListener() {
@@ -94,5 +93,9 @@ public class BandUtils implements AsyncResponse {
 
     public void unregisterGyroscopeListener() {
         sensorRegistrationManager.unregisterGyroscopeListener();
+    }
+
+    public void disconnect() {
+        bandClient.disconnect();
     }
 }

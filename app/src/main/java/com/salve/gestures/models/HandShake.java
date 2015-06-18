@@ -5,5 +5,5 @@ package com.salve.gestures.models;
  */
 public class HandShake extends Gesture {
 
-    public static final int SHAKE_THRESHOLD = 600;
+    public static final int SHAKE_THRESHOLD = 2000;
 }
