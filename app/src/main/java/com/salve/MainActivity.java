@@ -14,8 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-import com.salve.band.BandUtils;
-import com.salve.band.BandVersionType;
+import com.salve.band.utils.BandUtils;
+import com.salve.band.utils.BandVersionType;
 import com.salve.contacts.AccountUtils;
 
 import java.lang.reflect.Method;
@@ -54,6 +54,14 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDestroy() {
+        bandUtils.unregisterAccelerometerListener();
+        //bandUtils.unregisterGyroscopeListener();
+        bandUtils.disconnect();
+        super.onDestroy();
+    }
+
 
     public void connect(View view) {
 
@@ -72,8 +80,12 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    public void setupBluetooth(View view) {
 
+    public void registerAccelerometerListener(View view) {
+        bandUtils.registerAccelerometerListener();
+    }
+
+    public void setupBluetooth(View view) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Log.e("BLUETOOTH", ": Device does not support Bluetooth");
@@ -114,7 +126,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void getPairedDevices() {
         // Create a BroadcastReceiver for ACTION_FOUND
-        private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+         final BroadcastReceiver mReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 // When discovery finds a device
@@ -122,7 +134,7 @@ public class MainActivity extends ActionBarActivity {
                     // Get the BluetoothDevice object from the Intent
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // Add the name and address to an array adapter to show in a ListView
-                    ArrayAdapter mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    //new ArrayAdapter().add(device.getName() + "\n" + device.getAddress());
                 }
             }
         };
@@ -130,6 +142,4 @@ public class MainActivity extends ActionBarActivity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
     }
-}
-
 }
