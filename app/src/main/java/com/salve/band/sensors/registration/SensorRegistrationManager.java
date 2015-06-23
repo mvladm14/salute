@@ -27,6 +27,30 @@ public class SensorRegistrationManager {
         bandGyroscopeEventListener = new BandGyroscopeEventListenerImpl();
     }
 
+    public void registerAccelerometerListener(BandAccelerometerEventListener bandAccelerometerEventListener) {
+        try {
+            // register the listener
+            boolean registered = bandClient.getSensorManager().registerAccelerometerEventListener(
+                    bandAccelerometerEventListener,
+                    SampleRate.MS128);
+            Log.e(TAG, "Accelerometer registered "  + (registered ? "successfully." : "unsuccessfully."));
+        } catch (BandIOException ex) {
+            // handle BandException
+            ex.printStackTrace();
+        }
+    }
+
+    public void unregisterAccelerometerListener(BandAccelerometerEventListener bandAccelerometerEventListener) {
+        try {
+            // register the listener
+            bandClient.getSensorManager().unregisterAccelerometerEventListener(bandAccelerometerEventListener);
+            Log.e(TAG, "Accelerometer unregistered successfully.");
+        } catch (BandIOException ex) {
+            // handle BandException
+            ex.printStackTrace();
+        }
+    }
+
     public void registerAccelerometerListener() {
         try {
             // register the listener

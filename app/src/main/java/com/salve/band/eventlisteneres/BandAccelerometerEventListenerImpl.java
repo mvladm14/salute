@@ -15,10 +15,6 @@ import com.salve.gestures.recognition.RecognitionEngine;
  */
 public class BandAccelerometerEventListenerImpl implements BandAccelerometerEventListener {
 
-    public BandAccelerometerEventListenerImpl() {
-        Log.e("CACAT", "CACAT");
-    }
-
     private Gesture lastGesture;
 
     private long lastUpdate;

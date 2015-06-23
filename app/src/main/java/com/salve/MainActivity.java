@@ -1,39 +1,67 @@
 package com.salve;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
-import com.salve.band.utils.BandUtils;
+import com.salve.agrf.gestures.GestureConnectionService;
+import com.salve.agrf.gestures.GestureRecognitionService;
+import com.salve.agrf.gestures.IGestureRecognitionListener;
+import com.salve.agrf.gestures.IGestureRecognitionService;
+import com.salve.agrf.gestures.classifier.Distribution;
+import com.salve.band.utils.BandUtil;
 import com.salve.band.utils.BandVersionType;
 import com.salve.contacts.AccountUtils;
 
-import java.lang.reflect.Method;
-import java.util.Set;
-import java.util.UUID;
 
+public class MainActivity extends Activity {
 
-public class MainActivity extends ActionBarActivity {
+    private static final String TAG = "MainActivity";
 
-    private BandUtils bandUtils;
+    private TextView trainingTV;
+
     private static final int REQUEST_ENABLE_BT = 1;
-    private BluetoothAdapter mBluetoothAdapter;
+
+    private IBinder gestureListenerStub = new IGestureRecognitionListener.Stub() {
+
+        @Override
+        public void onGestureLearned(String gestureName) throws RemoteException {
+            Log.e(TAG, String.format("%s learned", gestureName));
+        }
+
+        @Override
+        public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
+            Log.e(TAG, String.format("Training set %s deleted", trainingSet));
+        }
+
+        @Override
+        public void onGestureRecognized(final Distribution distribution) throws RemoteException {
+            Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
+        }
+    };
+
+    private GestureConnectionService gestureConnectionService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        trainingTV = (TextView) findViewById(R.id.button99);
+
+        gestureConnectionService = new GestureConnectionService();
+        Intent bindIntent = new Intent(this, GestureRecognitionService.class);
+        this.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -54,39 +82,97 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        /*
+        IGestureRecognitionService recognitionService = gestureConnectionService.getRecognitionService();
+        try {
+            recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        recognitionService = null;
+        */
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
 
     public void connect(View view) {
 
-        bandUtils = new BandUtils(this);
-        bandUtils.connect();
+        //bandUtil = new BandUtil(this);
+        //bandUtil.connect();
+
+        final String activeTrainingSet = "handshake";
+        try {
+            gestureConnectionService.getRecognitionService().startClassificationMode(activeTrainingSet);
+            //Log.e(TAG,"CACAT");
+            gestureConnectionService.getRecognitionService().registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+        } catch (RemoteException e1) {
+            e1.printStackTrace();
+        }
 
     }
 
     public void getVersion(View view) {
-        bandUtils.retrieveVersion(BandVersionType.FIRMWARE);
+        //bandUtil.retrieveVersion(BandVersionType.FIRMWARE);
     }
 
     public void getContacts(View view) {
+
         AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(this);
 
     }
 
     public void registerAccelerometerListener(View view) {
-        bandUtils.registerAccelerometerListener();
+        //bandUtil.registerAccelerometerListener();
     }
+
+    public void training(View v) {
+        Log.e(TAG, "Train button pushed");
+        IGestureRecognitionService recognitionService = gestureConnectionService.getRecognitionService();
+        if (recognitionService != null) {
+            try {
+                if (!recognitionService.isLearning()) {
+                    trainingTV.setText("Stop Training");
+                    recognitionService.startLearnMode("handshake", "HANDSHAKE");
+                } else {
+                    trainingTV.setText("Start Training");
+                    recognitionService.stopLearnMode();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(TAG, "recognitionService is null");
+        }
+    }
+
 
     public void setupBluetooth(View view) {
 
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Log.e("BLUETOOTH", ": Device does not support Bluetooth");
         } else if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -97,58 +183,6 @@ public class MainActivity extends ActionBarActivity {
                 Log.e("BLUETOOTH", "I AM NOOOOOT CONNECTED");
             }
         }
-    }
-    public void queryPairedDevices(View view) {
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        String[] devices = new String[5];
-        ArrayAdapter mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, devices);
-        // If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                // Add the name and address to an array adapter to show in a ListView
-               // mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                Log.e("BLUETOOTH", device.getName() + "\n" + device.getAddress());
-            }
-
-        }
 
     }
-    // Create a BroadcastReceiver for ACTION_FOUND
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                Log.e("BLUETOOTH", device.getName() + "\n" + device.getAddress());
-
-            }
-        }
-    };
-    public void discoverDevices(View view){
-        if(mBluetoothAdapter.startDiscovery()){
-            // Register the BroadcastReceiver
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-        }
-
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        bandUtils.unregisterAccelerometerListener();
-        //bandUtils.unregisterGyroscopeListener();
-        bandUtils.disconnect();
-        unregisterReceiver(mReceiver);
-        mBluetoothAdapter.cancelDiscovery();
-
-    }
-
-
 }
