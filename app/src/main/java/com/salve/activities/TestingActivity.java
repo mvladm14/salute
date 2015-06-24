@@ -1,8 +1,7 @@
-package com.salve;
+package com.salve.activities;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -13,43 +12,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.salve.R;
+import com.salve.activityOperations.LoadingScreenOpsImpl;
 import com.salve.agrf.gestures.GestureConnectionService;
-import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
-import com.salve.agrf.gestures.classifier.Distribution;
-import com.salve.band.utils.BandUtil;
-import com.salve.band.utils.BandVersionType;
 import com.salve.contacts.AccountUtils;
 
 
-public class MainActivity extends Activity {
+public class TestingActivity extends Activity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "TestingActivity";
 
     private TextView trainingTV;
 
     private static final int REQUEST_ENABLE_BT = 1;
 
-    private IBinder gestureListenerStub = new IGestureRecognitionListener.Stub() {
-
-        @Override
-        public void onGestureLearned(String gestureName) throws RemoteException {
-            Log.e(TAG, String.format("%s learned", gestureName));
-        }
-
-        @Override
-        public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-            Log.e(TAG, String.format("Training set %s deleted", trainingSet));
-        }
-
-        @Override
-        public void onGestureRecognized(final Distribution distribution) throws RemoteException {
-            Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
-        }
-    };
-
     private GestureConnectionService gestureConnectionService;
+    private IBinder gestureListenerStub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +38,8 @@ public class MainActivity extends Activity {
 
         trainingTV = (TextView) findViewById(R.id.button99);
 
-        gestureConnectionService = new GestureConnectionService();
-        Intent bindIntent = new Intent(this, GestureRecognitionService.class);
-        this.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
-
+        gestureConnectionService = LoadingScreenOpsImpl.gestureConnectionService;
+        gestureListenerStub = LoadingScreenOpsImpl.gestureListenerStub;
     }
 
     @Override
@@ -93,15 +71,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        /*
-        IGestureRecognitionService recognitionService = gestureConnectionService.getRecognitionService();
-        try {
-            recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        recognitionService = null;
-        */
         super.onPause();
     }
 
@@ -112,15 +81,14 @@ public class MainActivity extends Activity {
 
 
     public void connect(View view) {
-
-        //bandUtil = new BandUtil(this);
-        //bandUtil.connect();
-
         final String activeTrainingSet = "handshake";
         try {
-            gestureConnectionService.getRecognitionService().startClassificationMode(activeTrainingSet);
-            //Log.e(TAG,"CACAT");
-            gestureConnectionService.getRecognitionService().registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            gestureConnectionService
+                    .getRecognitionService()
+                    .startClassificationMode(activeTrainingSet);
+            gestureConnectionService
+                    .getRecognitionService()
+                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
@@ -142,6 +110,7 @@ public class MainActivity extends Activity {
     }
 
     public void training(View v) {
+
         Log.e(TAG, "Train button pushed");
         IGestureRecognitionService recognitionService = gestureConnectionService.getRecognitionService();
         if (recognitionService != null) {

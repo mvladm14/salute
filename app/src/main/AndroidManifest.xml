@@ -8,20 +8,20 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <!-- Allows the application to use telephony to get the devices phone number when telephony is available without requiring telephony -->
+    <!--
+     Allows the application to use telephony to get the devices phone number when
+     telephony is available without requiring telephony
+    -->
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-
     <uses-permission android:name="com.microsoft.band.service.access.BIND_BAND_SERVICE" />
-
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
 
     <application
         android:allowBackup="true"
@@ -29,8 +29,17 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:name=".activities.TestingActivity"
+            android:label="@string/app_name" />
+
+        <service
+            android:name=".agrf.gestures.GestureRecognitionService"
+            android:enabled="true"
+            android:label="GestureRecognitionService" />
+
+        <activity
+            android:name=".activities.LoadingScreen"
+            android:label="@string/title_activity_loading_screen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,12 +47,9 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".agrf.gestures.GestureRecognitionService"
-            android:enabled="true"
-            android:label="GestureRecognitionService">
-        </service>
-
+        <activity
+            android:name=".activities.MainScreen"
+            android:label="@string/title_activity_main_screen"></activity>
     </application>
 
 </manifest>

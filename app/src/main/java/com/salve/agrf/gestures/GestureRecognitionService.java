@@ -11,6 +11,7 @@ import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
+import com.salve.activities.MainScreen;
 import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.agrf.gestures.classifier.GestureClassifier;
 import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
@@ -65,6 +66,10 @@ public class GestureRecognitionService extends Service implements GestureRecorde
         state = connectionState;
         Log.e(TAG, state.toString());
         recorder.registerListener(this);
+
+        Intent intent = new Intent(this, MainScreen.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -79,6 +84,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.e(TAG, "onUnbind");
         recorder.unregisterListener(this);
         return super.onUnbind(intent);
     }
@@ -90,7 +96,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 
             classifier.trainData(activeTrainingSet, new Gesture(values, activeLearnLabel));
             classifier.commitData();
-            Log.e(TAG, "got here!! " + listeners.size());
+            Log.e(TAG, "number of listeners = " + listeners.size());
             for (IGestureRecognitionListener listener : listeners) {
                 try {
                     listener.onGestureLearned(activeLearnLabel);

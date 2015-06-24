@@ -89,7 +89,7 @@ public class GestureRecorder implements BandAccelerometerEventListener {
 
         switch (recordMode) {
             case MOTION_DETECTION:
-                Log.e(TAG, calcVectorNorm(value) + " " + THRESHOLD);
+                Log.d(TAG, calcVectorNorm(value) + " " + THRESHOLD);
                 if (isRecording) {
                     gestureValues.add(value);
                     if (calcVectorNorm(value) < THRESHOLD) {

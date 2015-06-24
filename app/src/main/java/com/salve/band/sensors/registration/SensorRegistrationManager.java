@@ -44,7 +44,7 @@ public class SensorRegistrationManager {
         try {
             // register the listener
             bandClient.getSensorManager().unregisterAccelerometerEventListener(bandAccelerometerEventListener);
-            Log.e(TAG, "Accelerometer unregistered successfully.");
+            Log.e(TAG, "BAND Accelerometer unregistered successfully.");
         } catch (BandIOException ex) {
             // handle BandException
             ex.printStackTrace();
