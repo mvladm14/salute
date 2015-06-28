@@ -15,6 +15,7 @@ import android.util.Patterns;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -23,13 +24,13 @@ import java.util.regex.Matcher;
 /**
  * Created by Vlad on 6/16/2015.
  */
-public class AccountUtils {
-
+public class AccountUtils implements Serializable{
+    private static final long serialVersionUID = 1L;
     /**
      * Interface for interacting with the result of {@link AccountUtils#getUserProfile}.
      */
-    public static class UserProfile {
-
+    public static class UserProfile implements Serializable{
+        private static final long serialVersionUID = 1L;
         /**
          * Adds an email address to the list of possible email addresses for the user
          *
@@ -276,10 +277,11 @@ public class AccountUtils {
     /**
      * Contacts user profile query interface.
      */
-    private interface ProfileQuery {
+    private interface ProfileQuery extends Serializable{
         /**
          * The set of columns to extract from the profile query results
          */
+         static final long serialVersionUID = 1L;
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,

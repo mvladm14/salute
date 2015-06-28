@@ -22,9 +22,10 @@ public class InsecureConnection {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) return;
 
-        bluetoothDevice = bluetoothAdapter.getRemoteDevice("00:00:00:00:00:00");
-
-        Log.e(this.toString(), "Bluetooth not avaialable!");
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice("1C:62:B8:C3:C2:08");
+        if(bluetoothDevice==null) {
+            Log.e(this.toString(), "Bluetooth not avaialable!");
+        }
     }
 
 
@@ -32,11 +33,12 @@ public class InsecureConnection {
         // Set up the Bluetooth Connection
         // MAC needs to be uppercase
         // MAC has the format of XX:XX:XX ... (it NEEDS the colons)
+        setUpAdapter();
         MAC = MAC.toUpperCase();
 
         bluetoothDevice = bluetoothAdapter.getRemoteDevice(MAC);
         // UUID for Serial Port Protocol
-        UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        UUID mUUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
         // Connect based on API Version
         // Open the socket
         int currentApiVersion = android.os.Build.VERSION.SDK_INT;

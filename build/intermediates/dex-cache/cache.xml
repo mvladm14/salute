@@ -2,20 +2,6 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
-        <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\classes-4d717b545bcda3837877beaacaaa41c43ba46f6c.jar" />
-    </item>
-    <item
-        jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\libs\microsoft-band-1.3.10428.1-javadoc.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="830781078b1214480cdc284fbdddcbe318a5a62b">
-        <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\microsoft-band-1.3.10428.1-javadoc-d0ec2ae5bd2e4b0f7dfa64bae9389b693fdb6325.jar" />
-    </item>
-    <item
         jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -37,6 +23,20 @@
         <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-da715b3a15f10c6950befb909d4f7d80e39a5733.jar" />
     </item>
     <item
+        jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\3.1.59\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="2dd7b1a9ea65bb03d9cd16df777eeaf537a1fc81">
+        <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\classes-3e42452d73c65e18cc7030d7e56577af679a4dcc.jar" />
+    </item>
+    <item
+        jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\libs\microsoft-band-1.3.10428.1-javadoc.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="830781078b1214480cdc284fbdddcbe318a5a62b">
+        <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\microsoft-band-1.3.10428.1-javadoc-d0ec2ae5bd2e4b0f7dfa64bae9389b693fdb6325.jar" />
+    </item>
+    <item
         jar="C:\Users\rroxa_000\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -44,11 +44,11 @@
         <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-9b266386d4fd253d1ddbfbfc9b609590cefdae09.jar" />
     </item>
     <item
-        jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\3.1.59\jars\classes.jar"
+        jar="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="2dd7b1a9ea65bb03d9cd16df777eeaf537a1fc81">
-        <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\classes-3e42452d73c65e18cc7030d7e56577af679a4dcc.jar" />
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="C:\Users\rroxa_000\Documents\SALVE\salve\app\build\intermediates\pre-dexed\debug\classes-4d717b545bcda3837877beaacaaa41c43ba46f6c.jar" />
     </item>
 
 </items>
