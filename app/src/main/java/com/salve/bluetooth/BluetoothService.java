@@ -16,11 +16,8 @@ import android.util.Log;
 
 import com.salve.contacts.AccountUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -248,10 +245,10 @@ public class BluetoothService {
     /**
      * Write to the ConnectedThread in an unsynchronized manner
      *
-     * @param out The bytes to write
+     * @param message The bytes to write
      * @see ConnectedThread#write(byte[])
      */
-    public void write(byte[] out) {
+    public void write(AccountUtils.UserProfile message) {
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -259,8 +256,15 @@ public class BluetoothService {
             if (mState != STATE_CONNECTED) return;
             r = mConnectedThread;
         }
+        Log.e("La send", message.possibleNames().get(0));
         // Perform the write unsynchronized
-        r.write(out);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(r.mmOutStream);
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //r.write(out);
     }
 
     /**
@@ -487,20 +491,19 @@ public class BluetoothService {
             while (true) {
                 try {
                     // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    Log.e("Length", bytes + "");
-                    ByteArrayInputStream instream = new ByteArrayInputStream(buffer);
-                    ObjectInputStream inputObject = new ObjectInputStream(instream);
+                    //bytes = mmInStream.read(buffer);
+                    ObjectInputStream o = new ObjectInputStream(mmInStream);
+                    // SimpleContact c = new SimpleContact();
+                    AccountUtils.UserProfile c = null;
                     try {
-                        Object o =inputObject.readObject();
-                        AccountUtils.UserProfile myProfile = (AccountUtils.UserProfile)inputObject.readObject();
-                        Log.e("ACCOUNT", myProfile.primaryPhoneNumber());
+                        c = (AccountUtils.UserProfile) o.readObject();
+                        Log.e("CONTACT DETAILS", c.possibleNames().get(0));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                     // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    //mHandler.obtainMessage(Constants.MESSAGE_READ, c, -1, buffer)
+                    //       .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();

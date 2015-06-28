@@ -95,9 +95,9 @@ public class AccountUtils implements Serializable{
          *
          * @param photo the possible photo
          */
-        public void addPossiblePhoto(Uri photo) {
-            if (photo != null) _possible_photo = photo;
-        }
+//       public void addPossiblePhoto(Uri photo) {
+//            if (photo != null) _possible_photo = photo;
+//        }
 
         /**
          * Retrieves the list of possible email addresses.
@@ -131,9 +131,9 @@ public class AccountUtils implements Serializable{
          *
          * @return the possible photo
          */
-        public Uri possiblePhoto() {
-            return _possible_photo;
-        }
+//        public Uri possiblePhoto() {
+//            return _possible_photo;
+//        }
 
         /**
          * Retrieves the primary email address.
@@ -180,7 +180,7 @@ public class AccountUtils implements Serializable{
         /**
          * A possible photo for the user
          */
-        private Uri _possible_photo;
+ //       private Uri _possible_photo;
     }
 
     /**
@@ -191,8 +191,8 @@ public class AccountUtils implements Serializable{
      */
     public static UserProfile getUserProfile(Context context) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
-                ? getUserProfileOnIcsDevice(context)
-                : getUserProfileOnGingerbreadDevice(context);
+                ? getUserProfileOnIcsDevice(context):
+                 getUserProfileOnGingerbreadDevice(context);
     }
 
     /**
@@ -231,7 +231,7 @@ public class AccountUtils implements Serializable{
         final ContentResolver content = context.getContentResolver();
         final Cursor cursor = content.query(
                 // Retrieves data rows for the device user's 'profile' contact
-                Uri.withAppendedPath(
+               Uri.withAppendedPath(
                         ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
                 ProfileQuery.PROJECTION,
@@ -265,8 +265,8 @@ public class AccountUtils implements Serializable{
             else if (mime_type.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE))
                 user_profile.addPossiblePhoneNumber(cursor.getString(ProfileQuery.PHONE_NUMBER),
                         cursor.getInt(ProfileQuery.IS_PRIMARY_PHONE_NUMBER) > 0);
-            else if (mime_type.equals(ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE))
-                user_profile.addPossiblePhoto(Uri.parse(cursor.getString(ProfileQuery.PHOTO)));
+//            else if (mime_type.equals(ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE))
+//                user_profile.addPossiblePhoto(Uri.parse(cursor.getString(ProfileQuery.PHOTO)));
         }
 
         cursor.close();
