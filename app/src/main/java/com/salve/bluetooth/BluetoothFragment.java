@@ -46,11 +46,6 @@ import android.util.Log;
 import com.salve.R;
 import com.salve.contacts.AccountUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 /**
  * This fragment controls Bluetooth to communicate with other devices.
  */
@@ -181,8 +176,9 @@ public class BluetoothFragment extends Fragment {
                 View view = getView();
                 if (null != view) {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-                    //String message = textView.getText().toString();
+                    String message = textView.getText().toString();
                     AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(v.getContext());
+                    Log.e("PROOFILE", userProfile.possibleNames().get(0));
                     sendMessage(userProfile);
                 }
             }
@@ -210,38 +206,25 @@ public class BluetoothFragment extends Fragment {
     /**
      * Sends a message.
      *
-     * @param myProfile A string of text to send.
+     * @param userProfile A string of text to send.
      */
-    private void sendMessage(AccountUtils.UserProfile myProfile) {
+    private void sendMessage(AccountUtils.UserProfile userProfile) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            Log.e("BL","de aci");
+            Log.e("BL", "de aci");
             return;
         }
-
         // Check that there's actually something to send
-        //if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-          //  byte[] send = message.getBytes();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream stream = new ObjectOutputStream(out);
-            stream.writeObject(myProfile);
-            stream.close();
-            mChatService.write(out.toByteArray());
+        // if (message.length() > 0) {
+        // Get the message bytes and tell the BluetoothChatService to write
+        // byte[] send = message.getBytes();
+        mChatService.write(userProfile);
 
-            //out.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
+        // Reset out string buffer to zero and clear the edit text field
+        mOutStringBuffer.setLength(0);
         mOutEditText.setText(mOutStringBuffer);
+        // }
 
     }
 
@@ -255,6 +238,7 @@ public class BluetoothFragment extends Fragment {
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(view.getContext());
+                // SimpleContact c = new SimpleContact("loca",1);
                 sendMessage(userProfile);
             }
             return true;
@@ -302,9 +286,9 @@ public class BluetoothFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
-            Log.e("HANDLER","am ajuns in handleer");
-            Log.e("MESAJ",msg.what+"");
-            Log.e("MESAJ",msg.arg1+"");
+            Log.e("HANDLER", "am ajuns in handleer");
+            Log.e("MESAJ", msg.what + "");
+            Log.e("MESAJ", msg.arg1 + "");
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
@@ -352,8 +336,8 @@ public class BluetoothFragment extends Fragment {
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        Log.e("CODE",requestCode+"");
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("CODE", requestCode + "");
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
@@ -363,13 +347,13 @@ public class BluetoothFragment extends Fragment {
                 break;
             case REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
-                Log.e("BL","INSECURE");
+                Log.e("BL", "INSECURE");
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
                 break;
             case REQUEST_ENABLE_BT:
-                Log.e("REQUEST_ENABLE_BT","ON ACTIVITY RESULT");
+                Log.e("REQUEST_ENABLE_BT", "ON ACTIVITY RESULT");
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -416,7 +400,7 @@ public class BluetoothFragment extends Fragment {
                 return true;
             }
             case R.id.insecure_connect_scan: {
-                Log.e("SWITCH","INSECURE");
+                Log.e("SWITCH", "INSECURE");
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
