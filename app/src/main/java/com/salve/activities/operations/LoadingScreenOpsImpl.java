@@ -1,4 +1,4 @@
-package com.salve.activityOperations;
+package com.salve.activities.operations;
 
 import android.app.Activity;
 import android.content.Context;

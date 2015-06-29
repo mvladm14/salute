@@ -48,11 +48,11 @@
                     android:id="@+id/mainScreenStatusMessage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:layout_gravity="center"
+                    android:layout_weight="1"
                     android:paddingLeft="20dp"
-                    android:textAlignment="center"
                     android:text="@string/mainScreenStatusMessage"
+                    android:textAlignment="center"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </LinearLayout>
@@ -73,18 +73,6 @@
                     android:gravity="fill"
                     android:text="@string/mainScreenInformationMessage"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <Button
-                    android:id="@+id/testingScreenButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:autoLink="web"
-                    android:gravity="fill"
-                    android:text="Go to testing screen"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:onClick="goToTestingScreen"/>
 
             </LinearLayout>
         </LinearLayout>

@@ -28,6 +28,7 @@ import java.util.Set;
 public class GestureRecognitionService extends Service implements GestureRecorderListener, AsyncResponse {
 
     private final String TAG = "GestureRecognitionSvc";
+    public static final String BAND_CONNECTION_STATUS = "BAND_CONNECTION_STATUS";
 
     GestureRecorder recorder;
     GestureClassifier classifier;
@@ -68,6 +69,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
         recorder.registerListener(this);
 
         Intent intent = new Intent(this, MainScreen.class);
+        intent.putExtra(BAND_CONNECTION_STATUS, state);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

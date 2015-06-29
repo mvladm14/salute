@@ -1,6 +1,4 @@
-package com.salve.activityOperations;
-
-import android.app.Activity;
+package com.salve.activities.operations;
 
 /**
  * Created by Vlad on 6/24/2015.
