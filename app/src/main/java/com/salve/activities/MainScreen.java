@@ -81,4 +81,8 @@ public class MainScreen extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void goToTestingScreen(View view) {
+        mainScreenOps.goToActivity(this, TestingActivity.class);
+    }
 }

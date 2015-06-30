@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.salve.R;
+import com.salve.activities.operations.LoadingScreenOpsImpl;
 import com.salve.agrf.gestures.GestureConnectionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
@@ -47,8 +48,8 @@ public class TestingActivity extends AppCompatActivity {
 
         trainingTV = (TextView) findViewById(R.id.button99);
 
-        //gestureConnectionService = LoadingScreenOpsImpl.gestureConnectionService;
-       // gestureListenerStub = LoadingScreenOpsImpl.gestureListenerStub;
+        gestureConnectionService = LoadingScreenOpsImpl.gestureConnectionService;
+        gestureListenerStub = LoadingScreenOpsImpl.gestureListenerStub;
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             BluetoothFragment fragment = new BluetoothFragment();
