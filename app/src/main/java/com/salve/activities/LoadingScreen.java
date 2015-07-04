@@ -1,13 +1,18 @@
 package com.salve.activities;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.salve.R;
 import com.salve.activities.operations.ILoadingScreenOps;
 import com.salve.activities.operations.LoadingScreenOpsImpl;
+import com.salve.bluetooth.BluetoothUtilityOps;
+
+import java.util.List;
 
 public class LoadingScreen extends Activity {
 
@@ -19,8 +24,8 @@ public class LoadingScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
-
         initializeFields();
+
     }
 
     private void initializeFields() {
@@ -29,6 +34,13 @@ public class LoadingScreen extends Activity {
 
     private void initializeNonUIFields() {
         screenOps = new LoadingScreenOpsImpl(this);
+    }
+
+    public void deviceFound(List<BluetoothDevice> devices){
+    for (BluetoothDevice device:devices){
+        Log.e(TAG, device.getName() + "\n" + device.getAddress());
+    }
+
     }
 
     @Override

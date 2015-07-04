@@ -7,10 +7,15 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.salve.activities.LoadingScreen;
 import com.salve.agrf.gestures.GestureConnectionService;
 import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.classifier.Distribution;
+import com.salve.bluetooth.BluetoothAdapterName;
+import com.salve.bluetooth.BluetoothUtilityOps;
+
+import java.util.List;
 
 /**
  * Created by Vlad on 6/24/2015.
@@ -20,8 +25,8 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
     private static final String TAG = "LoadingScreenOpsImpl";
     public static IBinder gestureListenerStub;
     public static GestureConnectionService gestureConnectionService;
-
-    public LoadingScreenOpsImpl(Activity activity) {
+    private LoadingScreen activity;
+    public LoadingScreenOpsImpl(final LoadingScreen activity) {
 
         gestureListenerStub = new IGestureRecognitionListener.Stub() {
 
@@ -38,6 +43,12 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
             @Override
             public void onGestureRecognized(final Distribution distribution) throws RemoteException {
                 Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
+                BluetoothUtilityOps bluetoothUtilityOps = new BluetoothUtilityOps(activity);
+                bluetoothUtilityOps.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
+                bluetoothUtilityOps.queryDevices();
+
+
+
             }
         };
 
