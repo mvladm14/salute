@@ -45,4 +45,18 @@ public class Gesture implements Serializable {
     public int length() {
         return values.size();
     }
+
+    @Override
+    public String toString() {
+        String valuesString = "";
+        for (int i = 0; i < values.size(); i++) {
+            String list = "List " + i + " [";
+            for (float val : values.get(i)) {
+                list += val + " ";
+            }
+            list += "]\n";
+            valuesString += list;
+        }
+        return this.label + ": " + " Values = " + valuesString;
+    }
 }

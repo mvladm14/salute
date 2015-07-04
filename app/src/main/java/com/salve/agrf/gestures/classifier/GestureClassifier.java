@@ -38,6 +38,9 @@ public class GestureClassifier {
                 FileOutputStream fos = new FileOutputStream(new File(context.getExternalFilesDir(null), activeTrainingSet + ".gst").toString());
                 ObjectOutputStream o = new ObjectOutputStream(fos);
                 o.writeObject(trainingSet);
+                for (Gesture gesture : trainingSet) {
+                    Log.e(TAG, gesture.toString());
+                }
                 o.close();
                 fos.close();
                 return true;
@@ -64,7 +67,7 @@ public class GestureClassifier {
             ObjectInputStream o;
             try {
                 File f = context.getExternalFilesDir(null);
-                Log.e(TAG,f == null ? "NULL external file" : f.getAbsolutePath());
+                Log.e(TAG, f == null ? "NULL external file" : f.getAbsolutePath());
                 input = new FileInputStream(new File(context.getExternalFilesDir(null), activeTrainingSet + ".gst"));
                 o = new ObjectInputStream(input);
                 trainingSet = (ArrayList<Gesture>) o.readObject();
