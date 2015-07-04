@@ -19,16 +19,7 @@ public class LoadingScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
-
-        initializeFields();
-    }
-
-    private void initializeFields() {
         initializeNonUIFields();
-    }
-
-    private void initializeNonUIFields() {
-        screenOps = new LoadingScreenOpsImpl(this);
     }
 
     @Override
@@ -51,5 +42,16 @@ public class LoadingScreen extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        screenOps.LoadApplication();
+
+    }
+
+    private void initializeNonUIFields() {
+        screenOps = new LoadingScreenOpsImpl(this);
     }
 }

@@ -30,29 +30,33 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     private final String TAG = "GestureRecognitionSvc";
     public static final String BAND_CONNECTION_STATUS = "BAND_CONNECTION_STATUS";
 
-    GestureRecorder recorder;
-    GestureClassifier classifier;
-    String activeTrainingSet;
-    String activeLearnLabel;
+    private GestureRecorder recorder;
+    private GestureClassifier classifier;
+
+    private String activeTrainingSet;
+    private String activeLearnLabel;
     boolean isLearning, isClassifying;
 
-    Set<IGestureRecognitionListener> listeners = new HashSet<>();
+    private Set<IGestureRecognitionListener> listeners = new HashSet<>();
 
     private BandClient bandClient;
-    private SensorRegistrationManager sensorRegistrationManager;
-    ConnectionState state;
 
     @Override
     public void onCreate() {
 
         BandInfo[] pairedBands = BandClientManager.getInstance().getPairedBands();
-        bandClient = BandClientManager.getInstance().create(this, pairedBands[0]);
-        sensorRegistrationManager = new SensorRegistrationManager(bandClient);
 
-        connect();
+        if (pairedBands.length > 0) {
+            bandClient = BandClientManager.getInstance().create(this, pairedBands[0]);
+            SensorRegistrationManager sensorRegistrationManager = new SensorRegistrationManager(bandClient);
 
-        recorder = new GestureRecorder(sensorRegistrationManager, this);
-        classifier = new GestureClassifier(new NormedGridExtractor(), this);
+            connect();
+
+            recorder = new GestureRecorder(sensorRegistrationManager, this);
+            classifier = new GestureClassifier(new NormedGridExtractor(), this);
+        } else {
+            this.onFinishedConnection(ConnectionState.UNBOUND);
+        }
         super.onCreate();
     }
 
@@ -64,12 +68,11 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 
     @Override
     public void onFinishedConnection(ConnectionState connectionState) {
-        state = connectionState;
-        Log.e(TAG, state.toString());
-        recorder.registerListener(this);
+        Log.e(TAG, connectionState.toString());
+        if (recorder != null) recorder.registerListener(this);
 
         Intent intent = new Intent(this, MainScreen.class);
-        intent.putExtra(BAND_CONNECTION_STATUS, state);
+        intent.putExtra(BAND_CONNECTION_STATUS, connectionState);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

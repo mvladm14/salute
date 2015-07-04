@@ -21,8 +21,14 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
     public static IBinder gestureListenerStub;
     public static GestureConnectionService gestureConnectionService;
 
-    public LoadingScreenOpsImpl(Activity activity) {
+    private Activity mActivity;
 
+    public LoadingScreenOpsImpl(Activity activity) {
+       this.mActivity = activity;
+    }
+
+    @Override
+    public void LoadApplication() {
         gestureListenerStub = new IGestureRecognitionListener.Stub() {
 
             @Override
@@ -42,8 +48,8 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
         };
 
         gestureConnectionService = new GestureConnectionService();
-        Intent bindIntent = new Intent(activity, GestureRecognitionService.class);
-        activity.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
+        Intent bindIntent = new Intent(mActivity, GestureRecognitionService.class);
+        mActivity.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
     }
 
 
