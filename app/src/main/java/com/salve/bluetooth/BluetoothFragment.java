@@ -54,7 +54,7 @@ public class BluetoothFragment extends Fragment {
     private static final String TAG = "BluetoothFragment";
 
     // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    //private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 
@@ -86,7 +86,7 @@ public class BluetoothFragment extends Fragment {
     /**
      * Member object for the chat services
      */
-    private BluetoothService mChatService = null;
+    private BluetoothService mBluetoothService = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,21 +108,21 @@ public class BluetoothFragment extends Fragment {
     public void onStart() {
         super.onStart();
         // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
+        // setupBluetooth() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mChatService == null) {
-            setupChat();
+        } else if (mBluetoothService == null) {
+            setupBluetooth();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mChatService != null) {
-            mChatService.stop();
+        if (mBluetoothService != null) {
+            mBluetoothService.stop();
         }
     }
 
@@ -133,11 +133,11 @@ public class BluetoothFragment extends Fragment {
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mChatService != null) {
+        if (mBluetoothService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothService.STATE_NONE) {
+            if (mBluetoothService.getState() == BluetoothService.STATE_NONE) {
                 // Start the Bluetooth chat services
-                mChatService.start();
+                mBluetoothService.start();
             }
         }
     }
@@ -158,8 +158,8 @@ public class BluetoothFragment extends Fragment {
     /**
      * Set up the UI and background operations for chat.
      */
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
+    private void setupBluetooth() {
+        Log.d(TAG, "setupBluetooth()");
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
@@ -178,14 +178,13 @@ public class BluetoothFragment extends Fragment {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
                     AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(v.getContext());
-                    Log.e("PROOFILE", userProfile.possibleNames().get(0));
                     sendMessage(userProfile);
                 }
             }
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothService(getActivity(), mHandler);
+        mBluetoothService = new BluetoothService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -210,21 +209,19 @@ public class BluetoothFragment extends Fragment {
      */
     private void sendMessage(AccountUtils.UserProfile userProfile) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothService.STATE_CONNECTED) {
+        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            Log.e("BL", "de aci");
             return;
         }
         // Check that there's actually something to send
         // if (message.length() > 0) {
         // Get the message bytes and tell the BluetoothChatService to write
         // byte[] send = message.getBytes();
-        mChatService.write(userProfile);
+        mBluetoothService.write(userProfile);
 
         // Reset out string buffer to zero and clear the edit text field
         mOutStringBuffer.setLength(0);
         mOutEditText.setText(mOutStringBuffer);
-        // }
 
     }
 
@@ -286,9 +283,6 @@ public class BluetoothFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
-            Log.e("HANDLER", "am ajuns in handleer");
-            Log.e("MESAJ", msg.what + "");
-            Log.e("MESAJ", msg.arg1 + "");
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
@@ -339,13 +333,7 @@ public class BluetoothFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("CODE", requestCode + "");
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, true);
-                }
-                break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+                case REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 Log.e("BL", "INSECURE");
                 if (resultCode == Activity.RESULT_OK) {
@@ -357,7 +345,7 @@ public class BluetoothFragment extends Fragment {
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
+                    setupBluetooth();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
@@ -381,7 +369,7 @@ public class BluetoothFragment extends Fragment {
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        mChatService.connect(device, secure);
+        mBluetoothService.connect(device, secure);
     }
 
     @Override
@@ -390,15 +378,11 @@ public class BluetoothFragment extends Fragment {
 
     }
 
+
+    /*To be changed on connection when movement is detected*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.secure_connect_scan: {
-                // Launch the DeviceListActivity to see devices and do scan
-                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-                return true;
-            }
             case R.id.insecure_connect_scan: {
                 Log.e("SWITCH", "INSECURE");
                 // Launch the DeviceListActivity to see devices and do scan

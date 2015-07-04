@@ -55,8 +55,8 @@ public class BluetoothService {
     private static final String NAME_INSECURE = "BluetoothInsecure";
 
     // Unique UUID for this application
-    private static final UUID MY_UUID_SECURE =
-            UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+    // private static final UUID MY_UUID_SECURE =
+    //UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -313,13 +313,8 @@ public class BluetoothService {
 
             // Create a new listening server socket
             try {
-                if (secure) {
-                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
-                            MY_UUID_SECURE);
-                } else {
-                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-                            NAME_INSECURE, MY_UUID_INSECURE);
-                }
+                tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
+                        NAME_INSECURE, MY_UUID_INSECURE);
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
@@ -400,13 +395,8 @@ public class BluetoothService {
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
             try {
-                if (secure) {
-                    tmp = device.createRfcommSocketToServiceRecord(
-                            MY_UUID_SECURE);
-                } else {
-                    tmp = device.createInsecureRfcommSocketToServiceRecord(
-                            MY_UUID_INSECURE);
-                }
+                tmp = device.createInsecureRfcommSocketToServiceRecord(
+                        MY_UUID_INSECURE);
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
             }
@@ -493,16 +483,16 @@ public class BluetoothService {
                     // Read from the InputStream
                     //bytes = mmInStream.read(buffer);
                     ObjectInputStream o = new ObjectInputStream(mmInStream);
-                    // SimpleContact c = new SimpleContact();
-                    AccountUtils.UserProfile c = null;
+                    // SimpleContact myContact = new SimpleContact();
+                    AccountUtils.UserProfile myContact = null;
                     try {
-                        c = (AccountUtils.UserProfile) o.readObject();
-                        Log.e("CONTACT DETAILS", c.possibleNames().get(0));
+                        myContact = (AccountUtils.UserProfile) o.readObject();
+                        Log.e("CONTACT DETAILS", myContact.possibleNames().get(0));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                     // Send the obtained bytes to the UI Activity
-                    //mHandler.obtainMessage(Constants.MESSAGE_READ, c, -1, buffer)
+                    //mHandler.obtainMessage(Constants.MESSAGE_READ, myContact, -1, buffer)
                     //       .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
