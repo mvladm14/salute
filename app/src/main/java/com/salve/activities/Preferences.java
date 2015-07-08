@@ -15,64 +15,30 @@ import com.salve.activities.adapters.InteractiveArrayAdapter;
 import com.salve.activities.adapters.SocialExpandableListAdapter;
 import com.salve.activities.models.PreferencesModel;
 import com.salve.activities.models.SocialGroup;
+import com.salve.activities.operations.IPreferencesOps;
+import com.salve.activities.operations.PreferencesOpsImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Preferences extends AppCompatActivity {
 
-    private SparseArray<SocialGroup> groups;
+    private IPreferencesOps preferencesOps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
-        createData();
+        preferencesOps = new PreferencesOpsImpl();
 
         ExpandableListView expandablelistView = (ExpandableListView) findViewById(R.id.preferences_expandableListView);
-        SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, groups);
+        SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, preferencesOps.createSocialGroups());
         expandablelistView.setAdapter(socialExpandableAdapter);
 
         ListView listView = (ListView) findViewById(R.id.preferences_listView);
-        ArrayAdapter<PreferencesModel> adapter = new InteractiveArrayAdapter(this, getModel());
+        ArrayAdapter<PreferencesModel> adapter = new InteractiveArrayAdapter(this, preferencesOps.createPreferencesModels());
         listView.setAdapter(adapter);
-    }
-
-    private void createData() {
-        groups = new SparseArray<>();
-        for (int j = 0; j < 1; j++) {
-
-            List<PreferencesModel> socialNetworks = new ArrayList<>();
-            socialNetworks.add(new PreferencesModel("Facebook", R.drawable.facebook));
-            socialNetworks.add(new PreferencesModel("Twitter", R.drawable.twitter));
-            socialNetworks.add(new PreferencesModel("Linkedin", R.drawable.linkedin));
-
-            SocialGroup group = new SocialGroup(new PreferencesModel("Social", R.drawable.social), socialNetworks);
-            groups.append(j, group);
-        }
-    }
-
-    private List<PreferencesModel> getModel() {
-        List<PreferencesModel> list = new ArrayList<>();
-        list.add(get("Name & Surname", R.drawable.namesurname));
-        list.add(get("Mobile Phone No.", R.drawable.mobilephoneno));
-        list.add(get("Email", R.drawable.email));
-        list.add(get("Address", R.drawable.address));
-
-        selectMainItems(list);
-
-        return list;
-    }
-
-    private void selectMainItems(List<PreferencesModel> list) {
-        for (int i = 0; i < 4; i++) {
-            list.get(i).setSelected(true);
-        }
-    }
-
-    private PreferencesModel get(String s, int resId) {
-        return new PreferencesModel(s, resId);
     }
 
     @Override
