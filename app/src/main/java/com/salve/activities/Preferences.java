@@ -1,8 +1,11 @@
 package com.salve.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -56,12 +59,42 @@ public class Preferences extends AppCompatActivity {
         list.add(get("Mobile Phone No.", R.drawable.mobilephoneno));
         list.add(get("Email", R.drawable.email));
         list.add(get("Address", R.drawable.address));
-        // Initially select one of the items
-        list.get(1).setSelected(true);
+
+        selectMainItems(list);
+
         return list;
+    }
+
+    private void selectMainItems(List<PreferencesModel> list) {
+        for (int i = 0; i < 4; i++) {
+            list.get(i).setSelected(true);
+        }
     }
 
     private PreferencesModel get(String s, int resId) {
         return new PreferencesModel(s, resId);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main_screen, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_preferences) {
+            Intent intent = new Intent(this, Preferences.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
