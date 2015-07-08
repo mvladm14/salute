@@ -115,9 +115,11 @@ public class GestureRecognitionService extends Service implements GestureRecorde
             Distribution distribution = classifier.classifySignal(activeTrainingSet, new Gesture(values, null));
             recorder.pause(false);
             if (distribution != null && distribution.size() > 0) {
+                Log.e(TAG,"GESTURE was recognized");
                 for (IGestureRecognitionListener listener : listeners) {
                     try {
                         listener.onGestureRecognized(distribution);
+
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }

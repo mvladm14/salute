@@ -3,6 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="menu_preferences">Preferences</string>
     <string name="title_activity_loading_screen">LoadingScreen</string>
     <string name="loadingScreenSalve">Salve!</string>
     <string name="loadingScreenBeInTouch">Be in Touch</string>
@@ -26,4 +27,16 @@
     <string name="secure_connect">Connect a device - Secure</string>
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
+    <string name="title_activity_preferences">Preferences</string>
+
+    <string name="preferences_infoMessage">Choose what you want to share</string>
+    <string name="preferences_nameSurname">Name and Surname</string>
+    <string name="preferences_mobilePhoneNumber">Mobile Phone No.</string>
+    <string name="preferences_email">Email</string>
+    <string name="preferences_address">Address</string>
+    <string name="preferences_social">Social</string>
+    <string name="mainScreenInfoMessageOnBandConnected">You can shake hands with your friends and we will help you stay in touch.</string>
+    <string name="mainScreenInfoMessageOnBandNotConnected">In order to keep in touch with your friends, please make sure a connection is established between your wearable and your phone.</string>
+    <string name="wearableIsConnected">Wearable is connected.</string>
+    <string name="wearableIsNotConnected">Wearable is not connected</string>
 </resources>

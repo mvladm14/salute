@@ -1,9 +1,11 @@
 package com.salve.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,8 @@ import com.salve.activities.operations.MainScreenOpsImpl;
 import com.salve.agrf.gestures.GestureRecognitionService;
 
 public class MainScreen extends AppCompatActivity {
+
+    private static final String TAG = "MainScreen";
 
     private IMainScreenOps mainScreenOps;
     private ConnectionState connectionState;
@@ -48,12 +52,12 @@ public class MainScreen extends AppCompatActivity {
 
         mainScreenStatusMessage = (TextView) findViewById(R.id.mainScreenStatusMessage);
         mainScreenStatusMessage.setText(connectionState == ConnectionState.CONNECTED ?
-                "Wearable is connected." : "Wearable is not connected");
+                getString(R.string.wearableIsConnected) : getString(R.string.wearableIsNotConnected));
 
         mainScreenInformationMessage = (TextView) findViewById(R.id.mainScreenInformationMessage);
         mainScreenInformationMessage.setText(connectionState == ConnectionState.CONNECTED ?
-                "You can shake hands with your friends and we will help you stay in touch." :
-                "In order to keep in touch with your friends, please make sure a connection is established between your wearable and your phone.");
+                getString(R.string.mainScreenInfoMessageOnBandConnected) :
+                getString(R.string.mainScreenInfoMessageOnBandNotConnected));
     }
 
     private void initializeNonUIFields() {
@@ -75,8 +79,8 @@ public class MainScreen extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.menu_preferences) {
+            mainScreenOps.goToActivity(this, Preferences.class);
         }
 
         return super.onOptionsItemSelected(item);
