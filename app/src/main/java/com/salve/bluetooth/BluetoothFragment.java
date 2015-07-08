@@ -378,7 +378,7 @@ public class BluetoothFragment extends Fragment {
 
     }
 
-
+//TODO
     /*To be changed on connection when movement is detected*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -48,7 +48,7 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
             @Override
             public void onGestureRecognized(final Distribution distribution) throws RemoteException {
                 Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
-                BluetoothUtilityOps bluetoothUtilityOps = new BluetoothUtilityOps(mActivity);
+                BluetoothUtilityOps bluetoothUtilityOps = BluetoothUtilityOps.getInstance(mActivity);
                 bluetoothUtilityOps.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
                 bluetoothUtilityOps.queryDevices();
 

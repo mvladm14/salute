@@ -1,7 +1,9 @@
 package com.salve.activities;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,8 +30,14 @@ public class LoadingScreen extends Activity {
     }
 
     public void deviceFound(List<BluetoothDevice> devices) {
+        BluetoothUtilityOps bluetoothOps = BluetoothUtilityOps.getInstance(this);
         for (BluetoothDevice device : devices) {
             Log.e(TAG, device.getName() + "\n" + device.getAddress());
+
+            if(device.getName().equals(bluetoothOps.getDeviceName())){
+                Log.e(TAG,"HAVE THE SAME NAME");
+                bluetoothOps.connectDevice(device.getAddress());
+            }
         }
 
     }

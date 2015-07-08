@@ -7,8 +7,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.salve.R;
 import com.salve.activities.LoadingScreen;
 import com.salve.activities.operations.ILoadingScreenOps;
 
@@ -33,15 +38,35 @@ public class BluetoothUtilityOps {
     private ILoadingScreenOps loadingScreenOps;
     private static final String salveBluetoothName = "SALVE";
     private String bluetothOldDeviceName;
-    public BluetoothUtilityOps(LoadingScreen activity) {
+    private static volatile BluetoothUtilityOps instance;
+    private BluetoothService mBluetoothService = null;
+
+    public static BluetoothUtilityOps getInstance(LoadingScreen activity){
+        if(instance == null){
+            synchronized (BluetoothUtilityOps.class) {
+                if (instance == null) {
+                    instance = new BluetoothUtilityOps(activity);
+                }
+            }
+        }
+        return instance;
+    }
+
+    private BluetoothUtilityOps(LoadingScreen activity) {
         this.activity = activity;
         this.loadingScreenOps = loadingScreenOps;
         mNewDevicesArrayList = new ArrayList<>();
         pairedDevicesArrayList = new ArrayList<>();
         allFoundDevicesArrayList = new ArrayList<>();
         this.mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothService == null){
+            setupBluetooth();
+        }
     }
 
+    private void setupBluetooth(){
+        mBluetoothService = new BluetoothService(activity, mHandler);
+    }
     public void queryDevices() {
 
         // Register for broadcasts when a device is discovered
@@ -113,6 +138,7 @@ public class BluetoothUtilityOps {
         return pairedDevicesArrayList;
     }
 
+
     public void changeBluetoothDeviceName(BluetoothAdapterName command){
         if (command.equals(BluetoothAdapterName.CHANGE)) {
             bluetothOldDeviceName = mBtAdapter.getName();
@@ -122,7 +148,16 @@ public class BluetoothUtilityOps {
             mBtAdapter.setName(bluetothOldDeviceName);
         }
     }
+    public String getDeviceName(){
+        return mBtAdapter.getName();
+    }
 
+    public void connectDevice(String address) {
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBtAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        mBluetoothService.connect(device, false);
+    }
 
     public List<BluetoothDevice> getmNewDevicesArrayList() {
         return mNewDevicesArrayList;
@@ -133,4 +168,55 @@ public class BluetoothUtilityOps {
         allFoundDevicesArrayList.addAll(pairedDevicesArrayList);
         return allFoundDevicesArrayList;
     }
+
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+           // FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            Log.d(TAG, "CONNECTED");
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+                            Log.d(TAG, "CONNECTING");
+                            break;
+                        case BluetoothService.STATE_LISTEN:
+                        case BluetoothService.STATE_NONE:
+                            Log.d(TAG,"NOT CONNECTED");
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    String connectedDevice = msg.getData().getString(Constants.DEVICE_NAME);
+
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Log.d(TAG,msg.getData().getString(Constants.TOAST));
+                    }
+                    break;
+            }
+        }
+    };
+
+
 }
