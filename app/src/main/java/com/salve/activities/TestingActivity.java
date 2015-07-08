@@ -18,7 +18,6 @@ import com.salve.activities.operations.LoadingScreenOpsImpl;
 import com.salve.agrf.gestures.GestureConnectionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
-import com.salve.bluetooth.BluetoothFragment;
 import com.salve.contacts.AccountUtils;
 
 
@@ -27,12 +26,9 @@ public class TestingActivity extends AppCompatActivity {
     private static final String TAG = "TestingActivity";
 
     private TextView trainingTV;
-
-    private static final int REQUEST_ENABLE_BT = 1;
-    private BluetoothAdapter mBluetoothAdapter;
     private GestureConnectionService gestureConnectionService;
     private IBinder gestureListenerStub;
-    private boolean mLogShown;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +39,6 @@ public class TestingActivity extends AppCompatActivity {
 
         gestureConnectionService = LoadingScreenOpsImpl.gestureConnectionService;
         gestureListenerStub = LoadingScreenOpsImpl.gestureListenerStub;
-
-        //Bluetooth connection part
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            BluetoothFragment fragment = new BluetoothFragment();
-            transaction.replace(R.id.sample_content_fragment, fragment);
-            transaction.commit();
-
-        }
     }
 
     @Override
@@ -61,57 +48,6 @@ public class TestingActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-    //ar fi de sters
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem logToggle = menu.findItem(R.id.action_settings);
-        logToggle.setVisible(findViewById(R.id.sample_output) instanceof ViewAnimator);
-        logToggle.setTitle(mLogShown ? "true" : "false");
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-
-    //ar fi de sters
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                mLogShown = !mLogShown;
-                ViewAnimator output = (ViewAnimator) findViewById(R.id.sample_output);
-                if (mLogShown) {
-                    output.setDisplayedChild(1);
-                } else {
-                    output.setDisplayedChild(0);
-                }
-                supportInvalidateOptionsMenu();
-                return true;
-        }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
 
     public void connect(View view) {
         final String activeTrainingSet = "handshake";
@@ -153,10 +89,4 @@ public class TestingActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mBluetoothAdapter.cancelDiscovery();
-    }
 }

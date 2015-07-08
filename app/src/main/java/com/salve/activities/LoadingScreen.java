@@ -19,7 +19,7 @@ import java.util.List;
 public class LoadingScreen extends Activity {
 
     private static final String TAG = "LoadingScreen";
-
+    private BluetoothUtilityOps bluetoothOps;
     private ILoadingScreenOps screenOps;
 
     @Override
@@ -27,19 +27,30 @@ public class LoadingScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
         initializeNonUIFields();
+        bluetoothOps = BluetoothUtilityOps.getInstance(this);
     }
 
     public void deviceFound(List<BluetoothDevice> devices) {
-        BluetoothUtilityOps bluetoothOps = BluetoothUtilityOps.getInstance(this);
+        ensureDiscoverable();
         for (BluetoothDevice device : devices) {
             Log.e(TAG, device.getName() + "\n" + device.getAddress());
 
             if(device.getName().equals(bluetoothOps.getDeviceName())){
-                Log.e(TAG,"HAVE THE SAME NAME");
+                Log.e(TAG, "HAVE THE SAME NAME");
                 bluetoothOps.connectDevice(device.getAddress());
+
             }
         }
 
+    }
+    private void ensureDiscoverable() {
+        BluetoothAdapter mBluetoothAdapter = bluetoothOps.getBluetoothAdapter();
+        if (mBluetoothAdapter.getScanMode() !=
+                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
     }
 
     @Override
@@ -73,5 +84,10 @@ public class LoadingScreen extends Activity {
 
     private void initializeNonUIFields() {
         screenOps = new LoadingScreenOpsImpl(this);
+    }
+
+    @Override
+    protected void onDestroy(){
+        bluetoothOps.stopBluetoothService();
     }
 }
