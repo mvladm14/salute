@@ -3,6 +3,7 @@ package com.salve.activities.operations;
 import android.util.SparseArray;
 
 import com.salve.R;
+import com.salve.activities.Preferences;
 import com.salve.activities.models.PreferencesModel;
 import com.salve.activities.models.SocialGroup;
 
@@ -12,45 +13,60 @@ import java.util.List;
 /**
  * Created by Vlad on 7/8/2015.
  */
-public class PreferencesOpsImpl implements IPreferencesOps {
+public class PreferencesOpsImpl {
 
-    private List<PreferencesModel> preferencesModels;
+    private static List<PreferencesModel> preferencesModels;
+    private static SparseArray<SocialGroup> groups;
+    private static List<PreferencesModel> socialNetworkPreferencesModels;
 
-    public SparseArray<SocialGroup> createSocialGroups() {
-        SparseArray<SocialGroup> groups = new SparseArray<>();
-        for (int j = 0; j < 1; j++) {
+    public static List<PreferencesModel> getPreferencesModels() {
+        if (preferencesModels == null) {
+            preferencesModels = createPreferencesModels();
+        }
+        return preferencesModels;
+    }
 
-            List<PreferencesModel> socialNetworks = new ArrayList<>();
-            socialNetworks.add(new PreferencesModel("Facebook", R.drawable.facebook));
-            socialNetworks.add(new PreferencesModel("Twitter", R.drawable.twitter));
-            socialNetworks.add(new PreferencesModel("Linkedin", R.drawable.linkedin));
-
-            SocialGroup group = new SocialGroup(new PreferencesModel("Social", R.drawable.social), socialNetworks);
-            groups.append(j, group);
+    public static SparseArray<SocialGroup> getGroups() {
+        if (groups == null) {
+            groups = createSocialGroups();
         }
         return groups;
     }
 
-    @Override
-    public List<PreferencesModel> createPreferencesModels() {
-        preferencesModels = new ArrayList<>();
-        preferencesModels.add(create("Name & Surname", R.drawable.namesurname));
-        preferencesModels.add(create("Mobile Phone No.", R.drawable.mobilephoneno));
-        preferencesModels.add(create("Email", R.drawable.email));
-        preferencesModels.add(create("Address", R.drawable.address));
+    private static SparseArray<SocialGroup> createSocialGroups() {
+        SparseArray<SocialGroup> socialGroups = new SparseArray<>();
+        for (int j = 0; j < 1; j++) {
 
-        selectMainItems(preferencesModels);
+            socialNetworkPreferencesModels = new ArrayList<>();
+            socialNetworkPreferencesModels.add(new PreferencesModel("Facebook", R.drawable.facebook));
+            socialNetworkPreferencesModels.add(new PreferencesModel("Twitter", R.drawable.twitter));
+            socialNetworkPreferencesModels.add(new PreferencesModel("Linkedin", R.drawable.linkedin));
 
-        return preferencesModels;
+            SocialGroup group = new SocialGroup(new PreferencesModel("Social", R.drawable.social), socialNetworkPreferencesModels);
+            socialGroups.append(j, group);
+        }
+        return socialGroups;
     }
 
-    private void selectMainItems(List<PreferencesModel> list) {
+    private static List<PreferencesModel> createPreferencesModels() {
+        List<PreferencesModel> preferences = new ArrayList<>();
+        preferences.add(create("Name & Surname", R.drawable.namesurname));
+        preferences.add(create("Mobile Phone No.", R.drawable.mobilephoneno));
+        preferences.add(create("Email", R.drawable.email));
+        preferences.add(create("Address", R.drawable.address));
+
+        selectMainItems(preferences);
+
+        return preferences;
+    }
+
+    private static void selectMainItems(List<PreferencesModel> list) {
         for (int i = 0; i < 4; i++) {
             list.get(i).setSelected(true);
         }
     }
 
-    private PreferencesModel create(String s, int resId) {
+    private static PreferencesModel create(String s, int resId) {
         return new PreferencesModel(s, resId);
     }
 }

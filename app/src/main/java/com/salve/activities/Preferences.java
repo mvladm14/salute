@@ -3,7 +3,6 @@ package com.salve.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -14,30 +13,21 @@ import com.salve.R;
 import com.salve.activities.adapters.InteractiveArrayAdapter;
 import com.salve.activities.adapters.SocialExpandableListAdapter;
 import com.salve.activities.models.PreferencesModel;
-import com.salve.activities.models.SocialGroup;
-import com.salve.activities.operations.IPreferencesOps;
 import com.salve.activities.operations.PreferencesOpsImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Preferences extends AppCompatActivity {
-
-    private IPreferencesOps preferencesOps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
-        preferencesOps = new PreferencesOpsImpl();
-
         ExpandableListView expandablelistView = (ExpandableListView) findViewById(R.id.preferences_expandableListView);
-        SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, preferencesOps.createSocialGroups());
+        SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, PreferencesOpsImpl.getGroups());
         expandablelistView.setAdapter(socialExpandableAdapter);
 
         ListView listView = (ListView) findViewById(R.id.preferences_listView);
-        ArrayAdapter<PreferencesModel> adapter = new InteractiveArrayAdapter(this, preferencesOps.createPreferencesModels());
+        ArrayAdapter<PreferencesModel> adapter = new InteractiveArrayAdapter(this, PreferencesOpsImpl.getPreferencesModels());
         listView.setAdapter(adapter);
     }
 

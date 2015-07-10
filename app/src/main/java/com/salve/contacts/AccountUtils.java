@@ -181,6 +181,29 @@ public class AccountUtils implements Serializable{
          * A possible photo for the user
          */
  //       private Uri _possible_photo;
+
+        @Override
+        public String toString() {
+            String result = "";
+            String possibleNames = "Possible names: ";
+            for(String possibleName : _possible_names) {
+                possibleNames += possibleName + "; ";
+            }
+
+            String possible_phone_numbers = "Possible phone numbers: ";
+            for(String possiblePhoneNo : _possible_phone_numbers) {
+                possible_phone_numbers += possiblePhoneNo + "; ";
+            }
+
+            String possible_emails = "Possible email: ";
+            for(String possibleEmail : _possible_emails) {
+                possible_emails += possibleEmail + "; ";
+            }
+
+            result = possibleNames + "\n" + possible_phone_numbers + "\n" + possible_emails;
+
+            return result;
+        }
     }
 
     /**
@@ -204,7 +227,7 @@ public class AccountUtils implements Serializable{
     private static UserProfile getUserProfileOnGingerbreadDevice(Context context) {
         // Other that using Patterns (API level 8) this works on devices down to API level 5
         final Matcher valid_email_address = Patterns.EMAIL_ADDRESS.matcher("");
-        final Account[] accounts = AccountManager.get(context).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        final Account[] accounts = AccountManager.get(context).getAccounts();//getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
         final UserProfile user_profile = new UserProfile();
         // As far as I can tell, there is no way to get the real name or phone number from the Google account
         for (Account account : accounts) {

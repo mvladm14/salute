@@ -438,7 +438,7 @@ public class BluetoothService {
                     AccountUtils.UserProfile myContact;
                     try {
                         myContact = (AccountUtils.UserProfile) o.readObject();
-                        Log.e("RECEIVED CONTACT: ", myContact.possibleNames().get(0));
+                        Log.e("RECEIVED CONTACT: ", myContact.toString());
                         callback.changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
                         //TODO: aici s-ar putea apela stop() in loc de onDestroy()
                     } catch (ClassNotFoundException e) {

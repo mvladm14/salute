@@ -1,9 +1,7 @@
 package com.salve.activities;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,14 +10,12 @@ import android.view.MenuItem;
 import com.salve.R;
 import com.salve.activities.operations.ILoadingScreenOps;
 import com.salve.activities.operations.LoadingScreenOpsImpl;
-import com.salve.bluetooth.BluetoothUtilityOps;
 
 import java.util.List;
 
 public class LoadingScreen extends Activity {
 
     private static final String TAG = "LoadingScreen";
-    private BluetoothUtilityOps bluetoothOps;
     private ILoadingScreenOps screenOps;
 
     @Override
@@ -27,30 +23,6 @@ public class LoadingScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
         initializeNonUIFields();
-        bluetoothOps = BluetoothUtilityOps.getInstance(this);
-    }
-
-    public void deviceFound(List<BluetoothDevice> devices) {
-        ensureDiscoverable();
-        for (BluetoothDevice device : devices) {
-            Log.e(TAG, device.getName() + "\n" + device.getAddress());
-
-            if(device.getName().equals(bluetoothOps.getDeviceName())){
-                Log.e(TAG, "HAVE THE SAME NAME");
-                bluetoothOps.connectDevice(device.getAddress());
-
-            }
-        }
-
-    }
-    private void ensureDiscoverable() {
-        BluetoothAdapter mBluetoothAdapter = bluetoothOps.getBluetoothAdapter();
-        if (mBluetoothAdapter.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
     }
 
     @Override
@@ -78,16 +50,17 @@ public class LoadingScreen extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        screenOps.LoadApplication();
+
 
     }
 
     private void initializeNonUIFields() {
         screenOps = new LoadingScreenOpsImpl(this);
+        screenOps.LoadApplication();
     }
 
-    @Override
-    protected void onDestroy(){
-        bluetoothOps.stopBluetoothService();
+    public void deviceFound(List<BluetoothDevice> allFoundDevicesArrayList) {
+        Log.e(TAG, " = Callback: the device was found");
+        screenOps.deviceFound(allFoundDevicesArrayList);
     }
 }

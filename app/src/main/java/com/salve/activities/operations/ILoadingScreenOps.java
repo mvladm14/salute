@@ -9,5 +9,6 @@ import java.util.List;
  */
 public interface ILoadingScreenOps extends IActivityOperations {
     void LoadApplication();
+    public void deviceFound(List<BluetoothDevice> allFoundDevicesArrayList);
 
 }
