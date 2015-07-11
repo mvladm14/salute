@@ -13,7 +13,8 @@ import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Patterns;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
+import com.salve.activities.models.PreferencesModel;
+import com.salve.activities.operations.PreferencesOpsImpl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,13 +25,15 @@ import java.util.regex.Matcher;
 /**
  * Created by Vlad on 6/16/2015.
  */
-public class AccountUtils implements Serializable{
+public class AccountUtils implements Serializable {
     private static final long serialVersionUID = 1L;
+
     /**
      * Interface for interacting with the result of {@link AccountUtils#getUserProfile}.
      */
-    public static class UserProfile implements Serializable{
+    public static class UserProfile implements Serializable {
         private static final long serialVersionUID = 1L;
+
         /**
          * Adds an email address to the list of possible email addresses for the user
          *
@@ -177,30 +180,32 @@ public class AccountUtils implements Serializable{
          * A list of possible phone numbers for the user
          */
         private List<String> _possible_phone_numbers = new ArrayList<>();
+
         /**
          * A possible photo for the user
          */
- //       private Uri _possible_photo;
-
+        //       private Uri _possible_photo;
         @Override
         public String toString() {
             String result = "";
             String possibleNames = "Possible names: ";
-            for(String possibleName : _possible_names) {
+            for (String possibleName : _possible_names) {
                 possibleNames += possibleName + "; ";
             }
 
             String possible_phone_numbers = "Possible phone numbers: ";
-            for(String possiblePhoneNo : _possible_phone_numbers) {
+            for (String possiblePhoneNo : _possible_phone_numbers) {
                 possible_phone_numbers += possiblePhoneNo + "; ";
             }
 
             String possible_emails = "Possible email: ";
-            for(String possibleEmail : _possible_emails) {
+            for (String possibleEmail : _possible_emails) {
                 possible_emails += possibleEmail + "; ";
             }
 
-            result = possibleNames + "\n" + possible_phone_numbers + "\n" + possible_emails;
+            result = possibleNames + "\n" +
+                    possible_phone_numbers + "\n" +
+                    possible_emails;
 
             return result;
         }
@@ -214,8 +219,8 @@ public class AccountUtils implements Serializable{
      */
     public static UserProfile getUserProfile(Context context) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
-                ? getUserProfileOnIcsDevice(context):
-                 getUserProfileOnGingerbreadDevice(context);
+                ? getUserProfileOnIcsDevice(context) :
+                getUserProfileOnGingerbreadDevice(context);
     }
 
     /**
@@ -252,9 +257,10 @@ public class AccountUtils implements Serializable{
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private static UserProfile getUserProfileOnIcsDevice(Context context) {
         final ContentResolver content = context.getContentResolver();
+
         final Cursor cursor = content.query(
                 // Retrieves data rows for the device user's 'profile' contact
-               Uri.withAppendedPath(
+                Uri.withAppendedPath(
                         ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
                 ProfileQuery.PROJECTION,
@@ -276,16 +282,23 @@ public class AccountUtils implements Serializable{
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC"
         );
 
+
+
+        PreferencesModel nameAndSurname = PreferencesOpsImpl.getPreferencesModels().get(0);
+        PreferencesModel mobilePhoneNo = PreferencesOpsImpl.getPreferencesModels().get(1);
+        PreferencesModel email = PreferencesOpsImpl.getPreferencesModels().get(2);
+
+
         final UserProfile user_profile = new UserProfile();
         String mime_type;
         while (cursor.moveToNext()) {
             mime_type = cursor.getString(ProfileQuery.MIME_TYPE);
-            if (mime_type.equals(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE))
+            if (email.isSelected() && mime_type.equals(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE))
                 user_profile.addPossibleEmail(cursor.getString(ProfileQuery.EMAIL),
                         cursor.getInt(ProfileQuery.IS_PRIMARY_EMAIL) > 0);
-            else if (mime_type.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE))
+            else if (nameAndSurname.isSelected() && mime_type.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE))
                 user_profile.addPossibleName(cursor.getString(ProfileQuery.GIVEN_NAME) + " " + cursor.getString(ProfileQuery.FAMILY_NAME));
-            else if (mime_type.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE))
+            else if (mobilePhoneNo.isSelected() && mime_type.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE))
                 user_profile.addPossiblePhoneNumber(cursor.getString(ProfileQuery.PHONE_NUMBER),
                         cursor.getInt(ProfileQuery.IS_PRIMARY_PHONE_NUMBER) > 0);
 //            else if (mime_type.equals(ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE))
@@ -300,11 +313,11 @@ public class AccountUtils implements Serializable{
     /**
      * Contacts user profile query interface.
      */
-    private interface ProfileQuery extends Serializable{
+    private interface ProfileQuery extends Serializable {
         /**
          * The set of columns to extract from the profile query results
          */
-         static final long serialVersionUID = 1L;
+        static final long serialVersionUID = 1L;
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
