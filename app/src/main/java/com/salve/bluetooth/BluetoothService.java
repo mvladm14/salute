@@ -219,9 +219,9 @@ public class BluetoothService {
     /**
      * Write to the ConnectedThread in an unsynchronized manner
      *
-     * @param message The bytes to write
+     * @param userProfile The bytes to write
      */
-    public void write(AccountUtils.UserProfile message) {
+    public void write(AccountUtils.UserProfile userProfile) {
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -229,11 +229,11 @@ public class BluetoothService {
             if (mState != STATE_CONNECTED) return;
             r = mConnectedThread;
         }
-        Log.e("La send", message.possibleNames().get(0));
+        Log.e(TAG, "SENDING: " + userProfile.toString());
         // Perform the write unsynchronized
         try {
             ObjectOutputStream oos = new ObjectOutputStream(r.mmOutStream);
-            oos.writeObject(message);
+            oos.writeObject(userProfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
