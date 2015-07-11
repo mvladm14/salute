@@ -1,5 +1,6 @@
 package com.salve.bluetooth;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -182,6 +183,10 @@ public class BluetoothUtilityOps {
 
     public BluetoothAdapter getBluetoothAdapter() {
         return mBtAdapter;
+    }
+
+    public Activity getActivity(){
+        return activity;
     }
 
 

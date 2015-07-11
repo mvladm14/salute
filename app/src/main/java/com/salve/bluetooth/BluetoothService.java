@@ -4,6 +4,7 @@ package com.salve.bluetooth;
  * Created by rroxa_000 on 6/27/2015.
  */
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -14,6 +15,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.salve.contacts.AccountUtils;
+import com.salve.contacts.ImportContact;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -435,10 +437,12 @@ public class BluetoothService {
                 try {
                     // Read from the InputStream
                     ObjectInputStream o = new ObjectInputStream(mmInStream);
-                    AccountUtils.UserProfile myContact;
+                    AccountUtils.UserProfile receivedContact;
                     try {
-                        myContact = (AccountUtils.UserProfile) o.readObject();
-                        Log.e("RECEIVED CONTACT: ", myContact.toString());
+                        receivedContact = (AccountUtils.UserProfile) o.readObject();
+                        Log.e("RECEIVED CONTACT: ", receivedContact.toString());
+                        ImportContact op = new ImportContact();
+                        op.updateContact(callback.getActivity(),receivedContact);
                         callback.changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
                         //TODO: aici s-ar putea apela stop() in loc de onDestroy()
                     } catch (ClassNotFoundException e) {
@@ -461,6 +465,7 @@ public class BluetoothService {
                 Log.e(TAG, "close() of connect socket failed", e);
             }
         }
+
     }
 }
 
