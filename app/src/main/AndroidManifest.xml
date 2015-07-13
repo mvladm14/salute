@@ -7,7 +7,7 @@
     <!-- Required to access the Contacts Provider and user profile -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <!--
      Allows the application to use telephony to get the devices phone number when
      telephony is available without requiring telephony
@@ -51,23 +51,18 @@
             android:name=".activities.MainScreen"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_main_screen"
-            android:screenOrientation="portrait">
-            >
-        </activity>
+            android:screenOrientation="portrait" />
+
         <activity
-            android:name=".bluetooth.DeviceListActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/select_device"
-            android:theme="@android:style/Theme.Holo.Dialog" />
+            android:name=".activities.Preferences"
+            android:label="@string/title_activity_preferences" />
 
         <service
             android:name=".agrf.gestures.GestureRecognitionService"
             android:enabled="true"
-            android:label="GestureRecognitionService" />
+            android:label="GestureRecognitionService"
+            android:process=":salveBackground" />
 
-        <activity
-            android:name=".activities.Preferences"
-            android:label="@string/title_activity_preferences"></activity>
     </application>
 
 </manifest>
