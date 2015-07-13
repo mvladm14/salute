@@ -442,7 +442,7 @@ public class BluetoothService {
                         receivedContact = (AccountUtils.UserProfile) o.readObject();
                         Log.e("RECEIVED CONTACT: ", receivedContact.toString());
                         ImportContact op = new ImportContact();
-                        op.updateContact(callback.getActivity(),receivedContact);
+                        op.updateContact(callback.getGestureRecognitionService(),receivedContact);
                         callback.changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
                         //TODO: aici s-ar putea apela stop() in loc de onDestroy()
                     } catch (ClassNotFoundException e) {

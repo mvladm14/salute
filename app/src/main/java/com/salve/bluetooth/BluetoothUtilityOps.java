@@ -185,9 +185,8 @@ public class BluetoothUtilityOps {
         return mBtAdapter;
     }
 
-    public Activity getActivity(){
-        return activity;
+    public GestureRecognitionService getGestureRecognitionService() {
+        return this.gestureRecognitionService;
     }
-
 
 }
