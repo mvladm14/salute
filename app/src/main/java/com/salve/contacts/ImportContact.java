@@ -10,7 +10,8 @@ import android.database.Cursor;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.util.Log;
-
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 import java.util.ArrayList;
 
 /**
@@ -92,13 +93,20 @@ public class ImportContact {
         String[] paramsPhone = new String[]{name,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 String.valueOf(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)};
-
+        Cursor phoneCur = context.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, where, params, null);
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
         if (!contactExists(context, contact)) {
+
             importUsingIntent(context, contact);
         } else {
+            if(containsEmail(context)){
+                Log.e(TAG,"HAS EMAIL FIELD");
+            }
+            else{
+                Log.e(TAG, "DOES not have email field");
+            }
             Log.e(TAG, "UPDATE");
             ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
                     .withSelection(where, params)
@@ -139,6 +147,85 @@ public class ImportContact {
         }
         cur.close();
         return false;
+    }
+
+    private String mRawContactId;
+    private String mDataId;
+
+    private boolean containsEmail(Context context) {
+        boolean returnValue = false;
+        Cursor mContactCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        try {
+            if (mContactCursor.moveToFirst()) {
+                String mContactId = getCursorString(mContactCursor,
+                        ContactsContract.Contacts._ID);
+                Cursor mRawContactCursor = context.getContentResolver().query(
+                        ContactsContract.RawContacts.CONTENT_URI,
+                        null,
+                        ContactsContract.Data.CONTACT_ID + " = ?",
+                        new String[]{mContactId},
+                        null);
+
+                Log.v("RawContact", "Got RawContact Cursor");
+
+                try {
+                    ArrayList<String> mRawContactIds = new ArrayList<String>();
+                    while (mRawContactCursor.moveToNext()) {
+                        String rawId = getCursorString(mRawContactCursor, ContactsContract.RawContacts._ID);
+                        Log.e("RawContact", "ID: " + rawId);
+                        mRawContactIds.add(rawId);
+                    }
+                    for (String rawId : mRawContactIds) {
+                        // Make sure the "last checked" RawContactId is set locally for use in insert & update.
+                        mRawContactId = rawId;
+                        Cursor mDataCursor = context.getContentResolver().query(
+                                Data.CONTENT_URI,
+                                null,
+                                Data.RAW_CONTACT_ID + " = ? AND "
+                                        + Data.MIMETYPE + " = ? AND "
+                                        + Email.TYPE + " = ?",
+                                new String[] { mRawContactId,
+                                               Email.CONTENT_ITEM_TYPE,
+                                        String.valueOf(Email.TYPE_HOME)},
+                                null);
+
+
+                        if (mDataCursor.getCount() > 0) {
+                            mDataCursor.moveToFirst();
+                            mDataId = getCursorString(mDataCursor, ContactsContract.Data._ID);
+                            Log.e("Data", "Found data item with MIMETYPE and EMAIL.TYPE");
+                            mDataCursor.close();
+                            returnValue = true;
+                            break;
+                        } else {
+                            Log.e("Data", "Data doesn't contain MIMETYPE and EMAIL.TYPE");
+                            mDataCursor.close();
+                        }
+                        returnValue = false;
+                    }
+                } finally {
+                    mRawContactCursor.close();
+                }
+            }
+        } catch (Exception e) {
+            Log.w("UpdateContact", e.getMessage());
+            for (StackTraceElement ste : e.getStackTrace()) {
+                Log.w("UpdateContact", "\t" + ste.toString());
+            }
+            throw new RuntimeException();
+        } finally {
+            mContactCursor.close();
+        }
+        return returnValue;
+    }
+
+
+    private static String getCursorString(Cursor cursor, String columnName) {
+        Log.e("COLUMN Name",columnName);
+        int index = cursor.getColumnIndex(columnName);
+        if (index != -1) return cursor.getString(index);
+        return null;
     }
 
 }
