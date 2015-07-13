@@ -1,17 +1,13 @@
 package com.salve.activities;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.salve.R;
 import com.salve.activities.operations.ILoadingScreenOps;
 import com.salve.activities.operations.LoadingScreenOpsImpl;
-
-import java.util.List;
 
 public class LoadingScreen extends Activity {
 
@@ -47,20 +43,8 @@ public class LoadingScreen extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
     private void initializeNonUIFields() {
         screenOps = new LoadingScreenOpsImpl(this);
         screenOps.LoadApplication();
-    }
-
-    public void deviceFound(List<BluetoothDevice> allFoundDevicesArrayList) {
-        Log.e(TAG, " = Callback: the device was found");
-        screenOps.deviceFound(allFoundDevicesArrayList);
     }
 }

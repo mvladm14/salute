@@ -7,5 +7,4 @@ import com.microsoft.band.ConnectionState;
  */
 public interface AsyncResponse {
     void onFinishedConnection(ConnectionState connectionState);
-    void onFinishedVersion(String version);
 }

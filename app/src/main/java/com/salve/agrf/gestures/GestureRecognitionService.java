@@ -1,6 +1,8 @@
 package com.salve.agrf.gestures;
 
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -12,6 +14,8 @@ import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
 import com.salve.activities.MainScreen;
+import com.salve.activities.models.PreferencesModel;
+import com.salve.activities.operations.PreferencesOpsImpl;
 import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.agrf.gestures.classifier.GestureClassifier;
 import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
@@ -20,6 +24,8 @@ import com.salve.agrf.gestures.recorder.GestureRecorderListener;
 import com.salve.band.sensors.registration.SensorRegistrationManager;
 import com.salve.band.tasks.AsyncResponse;
 import com.salve.band.tasks.BandConnectionTask;
+import com.salve.bluetooth.BluetoothAdapterName;
+import com.salve.bluetooth.BluetoothUtilityOps;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,13 +42,17 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     private String activeTrainingSet;
     private String activeLearnLabel;
     boolean isLearning, isClassifying;
-
     private Set<IGestureRecognitionListener> listeners = new HashSet<>();
 
     private BandClient bandClient;
 
+    private BluetoothUtilityOps bluetoothOps;
+
     @Override
     public void onCreate() {
+
+
+        bluetoothOps = BluetoothUtilityOps.getInstance(this);
 
         BandInfo[] pairedBands = BandClientManager.getInstance().getPairedBands();
 
@@ -78,11 +88,6 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     }
 
     @Override
-    public void onFinishedVersion(String version) {
-
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         return gestureRecognitionServiceStub;
     }
@@ -115,15 +120,54 @@ public class GestureRecognitionService extends Service implements GestureRecorde
             Distribution distribution = classifier.classifySignal(activeTrainingSet, new Gesture(values, null));
             recorder.pause(false);
             if (distribution != null && distribution.size() > 0) {
-                Log.e(TAG,"GESTURE was recognized");
+                Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
+                Log.e(TAG, "GESTURE was recognized");
+
+                sendContactViaBluetooth();
+
                 for (IGestureRecognitionListener listener : listeners) {
                     try {
                         listener.onGestureRecognized(distribution);
-
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                 }
+            }
+        }
+    }
+
+    private void sendContactViaBluetooth() {
+        ensureDiscoverable();
+        bluetoothOps.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
+        bluetoothOps.queryDevices();
+
+        List<PreferencesModel> preferencesModels = PreferencesOpsImpl.getPreferencesModels();
+        int count = 0;
+        for (PreferencesModel model : preferencesModels) {
+            if (model.isSelected()) count++;
+        }
+
+        Log.e(TAG, "TOTAL PREFERENCES SELECTED = " + count);
+    }
+
+    private void ensureDiscoverable() {
+        BluetoothAdapter mBluetoothAdapter = bluetoothOps.getBluetoothAdapter();
+        if (mBluetoothAdapter.getScanMode() !=
+                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            this.startActivity(discoverableIntent);
+        }
+    }
+
+    public void deviceFound(List<BluetoothDevice> devices) {
+
+        for (BluetoothDevice device : devices) {
+            Log.e(TAG, device.getName() + "\n" + device.getAddress());
+
+            if(device.getName().equals(bluetoothOps.getDeviceName())){
+                Log.e(TAG, "HAVE THE SAME NAME ==> try to connect");
+                bluetoothOps.connectDevice(device.getAddress());
             }
         }
     }

@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import com.salve.activities.LoadingScreen;
+import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.contacts.AccountUtils;
 
 import java.util.ArrayList;
@@ -27,25 +27,25 @@ public class BluetoothUtilityOps {
     private List<BluetoothDevice> mNewDevicesArrayList;
     private List<BluetoothDevice> pairedDevicesArrayList;
     private List<BluetoothDevice> allFoundDevicesArrayList;
-    private LoadingScreen activity;
+    private GestureRecognitionService gestureRecognitionService;
     private static final String salveBluetoothName = "SALVE";
     private String bluetothOldDeviceName;
     private static volatile BluetoothUtilityOps instance;
     private BluetoothService mBluetoothService = null;
 
-    public static BluetoothUtilityOps getInstance(LoadingScreen activity) {
+    public static BluetoothUtilityOps getInstance(GestureRecognitionService gestureRecognitionService) {
         if (instance == null) {
             synchronized (BluetoothUtilityOps.class) {
                 if (instance == null) {
-                    instance = new BluetoothUtilityOps(activity);
+                    instance = new BluetoothUtilityOps(gestureRecognitionService);
                 }
             }
         }
         return instance;
     }
 
-    private BluetoothUtilityOps(LoadingScreen activity) {
-        this.activity = activity;
+    private BluetoothUtilityOps(GestureRecognitionService gestureRecognitionService) {
+        this.gestureRecognitionService = gestureRecognitionService;
         mNewDevicesArrayList = new ArrayList<>();
         pairedDevicesArrayList = new ArrayList<>();
         allFoundDevicesArrayList = new ArrayList<>();
@@ -67,11 +67,11 @@ public class BluetoothUtilityOps {
 
         // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        activity.registerReceiver(mReceiver, filter);
+        gestureRecognitionService.registerReceiver(mReceiver, filter);
 
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        activity.registerReceiver(mReceiver, filter);
+        gestureRecognitionService.registerReceiver(mReceiver, filter);
         getPairedDevices();
         doDiscovery();
     }
@@ -133,7 +133,7 @@ public class BluetoothUtilityOps {
                     Log.d(TAG, "No new devices have been discovered");
 
                 }
-                activity.deviceFound(getAllFoundDevicesArrayList());
+                gestureRecognitionService.deviceFound(getAllFoundDevicesArrayList());
                 changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
             }
         }
@@ -169,7 +169,7 @@ public class BluetoothUtilityOps {
             Log.e(TAG, "Not connected");
             return;
         }
-        AccountUtils.UserProfile myContact = AccountUtils.getUserProfile(activity);
+        AccountUtils.UserProfile myContact = AccountUtils.getUserProfile(gestureRecognitionService);
         mBluetoothService.write(myContact);
     }
 
