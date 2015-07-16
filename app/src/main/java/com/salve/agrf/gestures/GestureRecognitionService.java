@@ -163,9 +163,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     public void deviceFound(List<BluetoothDevice> devices) {
 
         for (BluetoothDevice device : devices) {
-            Log.e(TAG, device.getName() + "\n" + device.getAddress());
-
-            if(device.getName().equals(bluetoothOps.getDeviceName())){
+            if(device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())){
                 Log.e(TAG, "HAVE THE SAME NAME ==> try to connect");
                 bluetoothOps.connectDevice(device.getAddress());
             }

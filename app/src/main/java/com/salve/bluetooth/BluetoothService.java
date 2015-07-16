@@ -4,15 +4,12 @@ package com.salve.bluetooth;
  * Created by rroxa_000 on 6/27/2015.
  */
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.salve.contacts.AccountUtils;
 import com.salve.contacts.ImportContact;
@@ -442,7 +439,7 @@ public class BluetoothService {
                         receivedContact = (AccountUtils.UserProfile) o.readObject();
                         Log.e("RECEIVED CONTACT: ", receivedContact.toString());
                         ImportContact op = new ImportContact();
-                        op.updateContact(callback.getGestureRecognitionService(),receivedContact);
+                        op.updateContact(callback.getGestureRecognitionService(), receivedContact);
                         callback.changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
                         //TODO: aici s-ar putea apela stop() in loc de onDestroy()
                     } catch (ClassNotFoundException e) {

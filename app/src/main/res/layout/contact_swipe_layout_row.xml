@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.daimajia.swipe.SwipeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    app:clickToClose="true">
+
+    <LinearLayout
+        android:id="@+id/bottom_wrapper_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#66ddff00"
+        android:tag="bottom_left"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/trash"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/red"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:src="@drawable/trash" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_wrapper_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:tag="bottom_right">
+
+        <ImageView
+            android:id="@+id/add_contact"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:background="#4cd964"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:src="@drawable/add_contact_icon" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dark_gray"
+        android:padding="10dp"
+        android:tag="Hover"
+        android:text="Contact Info here - summary" />
+
+</com.daimajia.swipe.SwipeLayout>
