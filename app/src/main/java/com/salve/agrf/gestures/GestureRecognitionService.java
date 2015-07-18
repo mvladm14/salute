@@ -13,8 +13,8 @@ import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
-import com.salve.activities.MainScreen;
 import com.salve.activities.models.PreferencesModel;
+import com.salve.activities.operations.GestureRecognitionServiceReceiver;
 import com.salve.activities.operations.PreferencesOpsImpl;
 import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.agrf.gestures.classifier.GestureClassifier;
@@ -22,7 +22,7 @@ import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
 import com.salve.agrf.gestures.recorder.GestureRecorder;
 import com.salve.agrf.gestures.recorder.GestureRecorderListener;
 import com.salve.band.sensors.registration.SensorRegistrationManager;
-import com.salve.band.tasks.AsyncResponse;
+import com.salve.band.tasks.IBandConnectionAsyncResponse;
 import com.salve.band.tasks.BandConnectionTask;
 import com.salve.bluetooth.BluetoothAdapterName;
 import com.salve.bluetooth.BluetoothUtilityOps;
@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GestureRecognitionService extends Service implements GestureRecorderListener, AsyncResponse {
+public class GestureRecognitionService extends Service implements GestureRecorderListener, IBandConnectionAsyncResponse {
 
     private final String TAG = "GestureRecognitionSvc";
     public static final String BAND_CONNECTION_STATUS = "BAND_CONNECTION_STATUS";
@@ -81,10 +81,16 @@ public class GestureRecognitionService extends Service implements GestureRecorde
         Log.e(TAG, connectionState.toString());
         if (recorder != null) recorder.registerListener(this);
 
-        Intent intent = new Intent(this, MainScreen.class);
+        Intent intent = new Intent();
+        intent.setAction(GestureRecognitionServiceReceiver.PROCESS_RESPONSE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.putExtra(BAND_CONNECTION_STATUS, connectionState);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        sendBroadcast(intent);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
     }
 
     @Override
@@ -163,7 +169,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     public void deviceFound(List<BluetoothDevice> devices) {
 
         for (BluetoothDevice device : devices) {
-            if(device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())){
+            if (device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())) {
                 Log.e(TAG, "HAVE THE SAME NAME ==> try to connect");
                 bluetoothOps.connectDevice(device.getAddress());
             }

@@ -1,17 +1,11 @@
 package com.salve.activities.operations;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.util.Log;
+import android.content.IntentFilter;
 
 import com.salve.activities.LoadingScreen;
-import com.salve.agrf.gestures.GestureConnectionService;
 import com.salve.agrf.gestures.GestureRecognitionService;
-import com.salve.agrf.gestures.IGestureRecognitionListener;
-import com.salve.agrf.gestures.classifier.Distribution;
 
 /**
  * Created by Vlad on 6/24/2015.
@@ -19,8 +13,6 @@ import com.salve.agrf.gestures.classifier.Distribution;
 public class LoadingScreenOpsImpl implements ILoadingScreenOps {
 
     private static final String TAG = "LoadingScreenOpsImpl";
-    public static IBinder gestureListenerStub;
-    public static GestureConnectionService gestureConnectionService;
     private LoadingScreen mActivity;
 
     public LoadingScreenOpsImpl(final LoadingScreen mActivity) {
@@ -29,27 +21,21 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
 
     @Override
     public void LoadApplication() {
-        gestureListenerStub = new IGestureRecognitionListener.Stub() {
-
-            @Override
-            public void onGestureLearned(String gestureName) throws RemoteException {
-                Log.e(TAG, String.format("%s learned", gestureName));
-            }
-
-            @Override
-            public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-                Log.e(TAG, String.format("Training set %s deleted", trainingSet));
-            }
-
-            @Override
-            public void onGestureRecognized(final Distribution distribution) throws RemoteException {
-                Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
-            }
-        };
-
-        gestureConnectionService = new GestureConnectionService();
         Intent bindIntent = new Intent(mActivity, GestureRecognitionService.class);
-        mActivity.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
+        mActivity.startService(bindIntent);
+    }
+
+    @Override
+    public void registerReceiver(GestureRecognitionServiceReceiver receiver) {
+        IntentFilter filter = new IntentFilter(GestureRecognitionServiceReceiver.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new GestureRecognitionServiceReceiver();
+        mActivity.registerReceiver(receiver, filter);
+    }
+
+    @Override
+    public void unregisterReceiver(GestureRecognitionServiceReceiver receiver) {
+        mActivity.unregisterReceiver(receiver);
     }
 
 

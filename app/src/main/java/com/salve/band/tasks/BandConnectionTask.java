@@ -8,9 +8,9 @@ import com.microsoft.band.ConnectionState;
 
 public class BandConnectionTask extends AsyncTask<BandPendingResult<ConnectionState>, Void, ConnectionState> {
 
-    private AsyncResponse delegate = null;
+    private IBandConnectionAsyncResponse delegate = null;
 
-    public BandConnectionTask(AsyncResponse delegate) {
+    public BandConnectionTask(IBandConnectionAsyncResponse delegate) {
         this.delegate = delegate;
     }
 
