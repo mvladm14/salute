@@ -178,6 +178,12 @@ public class BluetoothUtilityOps {
     public List<BluetoothDevice> getAllFoundDevicesArrayList() {
         allFoundDevicesArrayList.addAll(mNewDevicesArrayList);
         allFoundDevicesArrayList.addAll(pairedDevicesArrayList);
+
+        Log.e(TAG, "Bluetooth devices found:");
+        for (BluetoothDevice device : allFoundDevicesArrayList) {
+            Log.e(TAG, device.getName() + " " + device.getAddress());
+        }
+
         return allFoundDevicesArrayList;
     }
 

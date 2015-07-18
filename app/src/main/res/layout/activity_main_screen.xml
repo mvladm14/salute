@@ -20,20 +20,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:orientation="horizontal"
+                android:padding="20dp">
 
                 <View
                     android:id="@+id/circle"
@@ -41,8 +37,7 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:background="@drawable/circle_shape"
-                    android:paddingTop="10dp" />
+                    android:background="@drawable/circle_shape"/>
 
                 <TextView
                     android:id="@+id/mainScreenStatusMessage"
@@ -59,41 +54,29 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="10"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/mainScreenInformationMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|right"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
                     android:autoLink="web"
                     android:gravity="fill"
                     android:text="@string/mainScreenInformationMessage"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <Button
-                    android:id="@+id/testingScreenButton"
-                    android:layout_width="wrap_content"
+                <ListView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/contacts_list_view"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:autoLink="web"
-                    android:gravity="fill"
-                    android:onClick="goToTestingScreen"
-                    android:text="Go to testing screen"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:layout_weight="1"/>
 
             </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
     </LinearLayout>
 
     <LinearLayout

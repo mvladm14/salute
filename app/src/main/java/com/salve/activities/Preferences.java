@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.salve.R;
 import com.salve.activities.adapters.InteractiveArrayAdapter;
 import com.salve.activities.adapters.SocialExpandableListAdapter;
@@ -21,6 +22,8 @@ public class Preferences extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
+
+
 
         ExpandableListView expandablelistView = (ExpandableListView) findViewById(R.id.preferences_expandableListView);
         SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, PreferencesOpsImpl.getGroups());
