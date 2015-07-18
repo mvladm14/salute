@@ -62,6 +62,10 @@
             android:name=".activities.About"
             android:label="@string/title_activity_about" >
         </activity>
+        <activity
+            android:name=".activities.HandShake"
+            android:label="@string/title_activity_hand_shake" >
+        </activity>
     </application>
 
 </manifest>

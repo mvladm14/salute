@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.salve.R;
+import com.salve.activities.asyncReplies.IGestureConnectionServiceAsyncReply;
 import com.salve.agrf.gestures.GestureConnectionService;
 import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
@@ -19,7 +20,7 @@ import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.contacts.AccountUtils;
 
 
-public class TestingActivity extends AppCompatActivity {
+public class TestingActivity extends AppCompatActivity implements IGestureConnectionServiceAsyncReply {
 
     private static final String TAG = "TestingActivity";
 
@@ -36,7 +37,7 @@ public class TestingActivity extends AppCompatActivity {
 
         trainingTV = (TextView) findViewById(R.id.button99);
 
-        gestureConnectionService = new GestureConnectionService();
+        gestureConnectionService = new GestureConnectionService(this);
 
         gestureListenerStub = new IGestureRecognitionListener.Stub() {
 
@@ -74,21 +75,6 @@ public class TestingActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void connect(View view) {
-        final String activeTrainingSet = "handshake";
-        try {
-            gestureConnectionService
-                    .getRecognitionService()
-                    .startClassificationMode(activeTrainingSet);
-            gestureConnectionService
-                    .getRecognitionService()
-                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-        } catch (RemoteException e1) {
-            e1.printStackTrace();
-        }
-
-    }
-
     public void getContacts(View view) {
         AccountUtils.UserProfile userProfile = AccountUtils.getUserProfile(this);
     }
@@ -112,5 +98,25 @@ public class TestingActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "recognitionService is null");
         }
+    }
+
+    @Override
+    public void onServiceConnected() {
+        final String activeTrainingSet = "handshake";
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .startClassificationMode(activeTrainingSet);
+            gestureConnectionService
+                    .getRecognitionService()
+                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+        } catch (RemoteException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected() {
+
     }
 }

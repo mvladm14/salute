@@ -100,6 +100,9 @@ public class MainScreen extends AppCompatActivity {
             case R.id.menu_about:
                 mainScreenOps.goToActivity(this, About.class);
                 break;
+            case R.id.menu_handshake:
+                mainScreenOps.goToActivity(this, HandShake.class);
+                break;
             default:
                 break;
         }

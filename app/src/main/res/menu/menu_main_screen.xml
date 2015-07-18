@@ -13,10 +13,16 @@
         android:alphabeticShortcut="b"
         android:orderInCategory="2"
         android:title="Testing" />
+    <item
+        android:id="@+id/menu_handshake"
+        android:alphabeticShortcut="c"
+        android:orderInCategory="3"
+        android:title="Handshake" />
 
     <item
         android:id="@+id/menu_about"
-        android:alphabeticShortcut="c"
-        android:orderInCategory="3"
+        android:alphabeticShortcut="4"
+        android:orderInCategory="4"
         android:title="About" />
+
 </menu>
