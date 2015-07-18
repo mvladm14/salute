@@ -64,13 +64,14 @@ public class TestingActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main_screen, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     protected void onDestroy() {
         this.unbindService(gestureConnectionService);
+        super.onDestroy();
     }
 
     public void connect(View view) {

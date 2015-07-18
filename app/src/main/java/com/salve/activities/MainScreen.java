@@ -90,12 +90,18 @@ public class MainScreen extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_preferences) {
-            mainScreenOps.goToActivity(this, Preferences.class);
-        }
-        if (id == R.id.menu_testing) {
-            mainScreenOps.goToActivity(this, TestingActivity.class);
+        switch (id) {
+            case R.id.menu_preferences:
+                mainScreenOps.goToActivity(this, Preferences.class);
+                break;
+            case R.id.menu_testing:
+                mainScreenOps.goToActivity(this, TestingActivity.class);
+                break;
+            case R.id.menu_about:
+                mainScreenOps.goToActivity(this, About.class);
+                break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
