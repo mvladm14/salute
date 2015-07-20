@@ -6,5 +6,6 @@ package com.salve.activities.commands;
 public enum CommandType {
 
     StartTraining,
-    StopTraining
+    StopTraining,
+    SendNotification
 }

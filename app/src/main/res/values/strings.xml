@@ -61,4 +61,8 @@
     <string name="handshake_alertDialog_stop">Stop</string>
     <string name="handshake_alertDialog_cancel">Cancel</string>
 
+    <!-- NOTIFICATION-->
+    <string name="notification_stopService">Stop</string>
+    <string name="notification_message">I am detecting your handshakes in background...</string>
+
 </resources>

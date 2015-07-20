@@ -1,15 +1,13 @@
 package com.salve.activities;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.salve.R;
-import com.salve.activities.operations.GestureRecognitionServiceReceiver;
+import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
 import com.salve.activities.operations.ILoadingScreenOps;
 import com.salve.activities.operations.LoadingScreenOpsImpl;
 
@@ -59,5 +57,6 @@ public class LoadingScreen extends Activity {
     protected void onDestroy() {
         Log.e(TAG,"onDestroy() called.");
         screenOps.unregisterReceiver(receiver);
+        super.onDestroy();
     }
 }

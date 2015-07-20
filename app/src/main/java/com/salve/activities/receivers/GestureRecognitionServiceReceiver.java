@@ -1,4 +1,4 @@
-package com.salve.activities.operations;
+package com.salve.activities.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

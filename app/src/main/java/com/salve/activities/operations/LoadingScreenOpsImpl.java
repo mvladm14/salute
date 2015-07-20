@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.salve.activities.LoadingScreen;
+import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
 import com.salve.agrf.gestures.GestureRecognitionService;
 
 /**
@@ -35,7 +36,7 @@ public class LoadingScreenOpsImpl implements ILoadingScreenOps {
 
     @Override
     public void unregisterReceiver(GestureRecognitionServiceReceiver receiver) {
-        mActivity.unregisterReceiver(receiver);
+        if (receiver != null) mActivity.unregisterReceiver(receiver);
     }
 
 

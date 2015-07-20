@@ -1,5 +1,7 @@
 package com.salve.activities.operations;
 
+import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
+
 /**
  * Created by Vlad on 6/24/2015.
  */
