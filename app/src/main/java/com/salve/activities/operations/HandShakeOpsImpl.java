@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.salve.R;
+import com.salve.activities.HandShake;
 import com.salve.activities.asyncReplies.IGestureConnectionServiceAsyncReply;
 import com.salve.activities.commands.Command;
 import com.salve.activities.commands.CommandFactory;
@@ -21,6 +22,7 @@ import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
 import com.salve.agrf.gestures.classifier.Distribution;
+import com.salve.tasks.UpdateHandshakeTask;
 
 /**
  * Created by Vlad on 7/18/2015.
@@ -45,6 +47,7 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
             @Override
             public void onGestureLearned(String gestureName) throws RemoteException {
                 Log.e(TAG, String.format("%s learned", gestureName));
+                new UpdateHandshakeTask((HandShake)mActivity).execute();
             }
 
             @Override
@@ -113,13 +116,16 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
 
     @Override
     public void onServiceConnected() {
+        Log.e(TAG, "Connected to the background service");
         try {
             gestureConnectionService
                     .getRecognitionService()
                     .startClassificationMode(activeTrainingSet);
+            Log.e(TAG, "Starting classification");
             gestureConnectionService
                     .getRecognitionService()
                     .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            Log.e(TAG, "Listener registered");
         } catch (RemoteException e) {
             e.printStackTrace();
         }

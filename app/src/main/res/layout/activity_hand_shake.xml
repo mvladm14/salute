@@ -44,8 +44,7 @@
                     android:id="@+id/handshake_defaultGesture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:checked="true"/>
+                    android:layout_gravity="center"/>
 
                 <TextView
                     android:id="@+id/handshake_defaultGestureLabel"
@@ -91,7 +90,8 @@
                     android:id="@+id/handshake_myOwnGesture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:enabled="false"/>
 
                 <TextView
                     android:id="@+id/handshake_myOwnGestureLabel"
@@ -102,6 +102,15 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/handshake_gestureLearnedMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/holo_green_dark"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
         </LinearLayout>
 
         <LinearLayout

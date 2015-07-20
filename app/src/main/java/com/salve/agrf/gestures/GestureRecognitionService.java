@@ -16,8 +16,6 @@ import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
 import com.salve.activities.commands.SendNotificationCommand;
-import com.salve.activities.models.PreferencesModel;
-import com.salve.activities.operations.PreferencesOpsImpl;
 import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
 import com.salve.activities.receivers.StopServiceReceiver;
 import com.salve.agrf.gestures.classifier.Distribution;
@@ -166,14 +164,6 @@ public class GestureRecognitionService extends Service implements GestureRecorde
         ensureDiscoverable();
         bluetoothOps.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
         bluetoothOps.queryDevices();
-
-        List<PreferencesModel> preferencesModels = PreferencesOpsImpl.getPreferencesModels();
-        int count = 0;
-        for (PreferencesModel model : preferencesModels) {
-            if (model.isSelected()) count++;
-        }
-
-        Log.e(TAG, "TOTAL PREFERENCES SELECTED = " + count);
     }
 
     private void ensureDiscoverable() {

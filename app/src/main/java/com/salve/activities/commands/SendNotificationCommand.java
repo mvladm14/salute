@@ -29,6 +29,7 @@ public class SendNotificationCommand implements Command {
     @Override
     public void execute() {
         Log.e(TAG, "executing");
+
         PendingIntent stopServiceIntent = PendingIntent.getBroadcast(mService,
                 0,
                 new Intent(StopServiceReceiver.RECEIVER_FILTER),

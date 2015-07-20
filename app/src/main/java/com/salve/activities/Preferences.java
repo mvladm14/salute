@@ -23,7 +23,14 @@ public class Preferences extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
+        initializeFields();
+    }
 
+    private void initializeFields() {
+        initializeUIFields();
+    }
+
+    private void initializeUIFields() {
 
         ExpandableListView expandablelistView = (ExpandableListView) findViewById(R.id.preferences_expandableListView);
         SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, PreferencesOpsImpl.getGroups());
@@ -32,6 +39,7 @@ public class Preferences extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.preferences_listView);
         ArrayAdapter<PreferencesModel> adapter = new InteractiveArrayAdapter(this, PreferencesOpsImpl.getPreferencesModels());
         listView.setAdapter(adapter);
+
     }
 
     @Override
