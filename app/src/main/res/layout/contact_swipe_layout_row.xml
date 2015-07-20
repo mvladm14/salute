@@ -45,9 +45,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/dark_gray"
+        android:background="@drawable/white"
         android:padding="10dp"
         android:tag="Hover"
-        android:text="Contact Info here - summary" />
+        android:text="Contact Info here - summary">
+    </TextView>
+
+
 
 </com.daimajia.swipe.SwipeLayout>

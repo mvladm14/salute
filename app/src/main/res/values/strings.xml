@@ -32,6 +32,7 @@
         friends, please make sure a connection is established between your wearable and your phone.</string>
     <string name="wearableIsConnected">Wearable is connected.</string>
     <string name="wearableIsNotConnected">Wearable is not connected</string>
+    <string name="mainScreenSwipeMessage">Swipe to delete or import</string>
 
 
     <!-- ABOUT ACTIVITY -->
