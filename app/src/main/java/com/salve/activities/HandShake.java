@@ -5,11 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.salve.R;
@@ -21,11 +24,14 @@ import java.util.Date;
 
 public class HandShake extends AppCompatActivity {
 
+    private static final String TAG = "HandShake";
+
     private HandShakeOpsImpl handShakeOps;
 
-    private CheckBox myOwnGesture;
-    private CheckBox defaultGesture;
+    private RadioButton myOwnGesture;
+    private RadioButton defaultGesture;
     private TextView gestureLearnedTextView;
+    private ImageView trashImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,26 +51,56 @@ public class HandShake extends AppCompatActivity {
     }
 
     private void initializeUIFields() {
-        myOwnGesture = (CheckBox) findViewById(R.id.handshake_myOwnGesture);
-        defaultGesture = (CheckBox) findViewById(R.id.handshake_defaultGesture);
+
+        trashImageView = (ImageView) findViewById(R.id.trashImageView);
+        myOwnGesture = (RadioButton) findViewById(R.id.handshake_myOwnGesture);
+        defaultGesture = (RadioButton) findViewById(R.id.handshake_defaultGesture);
         gestureLearnedTextView = (TextView) findViewById(R.id.handshake_gestureLearnedMessage);
+
+        trashImageView.setVisibility(View.INVISIBLE);
+
+        gestureLearnedTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    trashImageView.setVisibility(View.INVISIBLE);
+                    myOwnGesture.setEnabled(false);
+                } else {
+                    trashImageView.setVisibility(View.VISIBLE);
+                    myOwnGesture.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         Context ctx = getApplicationContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         defaultGesture.setChecked(prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true));
         myOwnGesture.setChecked(prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, false));
+        gestureLearnedTextView.setText(prefs.getString(SalvePreferences.OWN_GESTURE_DEFINE_DATE, ""));
 
         myOwnGesture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     defaultGesture.setChecked(false);
+                    handShakeOps.restartClassification(SalvePreferences.MY_OWN_GESTURE);
                 }
                 Context ctx = getApplicationContext();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(SalvePreferences.MY_OWN_GESTURE, b);
                 editor.apply();
+
             }
         });
 
@@ -73,6 +109,7 @@ public class HandShake extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     myOwnGesture.setChecked(false);
+                    handShakeOps.restartClassification(SalvePreferences.DEFAULT_GESTURE);
                 }
 
                 Context ctx = getApplicationContext();
@@ -122,5 +159,19 @@ public class HandShake extends AppCompatActivity {
 
         gestureLearnedTextView.setText(String.format("%s", "Defined on " + currentDateandTime));
         myOwnGesture.setEnabled(true);
+
+        Context ctx = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(SalvePreferences.OWN_GESTURE_DEFINE_DATE, String.format("%s", "Defined on " + currentDateandTime));
+        editor.apply();
+    }
+
+    public void deleteGestureData(View view) {
+        gestureLearnedTextView.setText("");
+        myOwnGesture.setChecked(false);
+        myOwnGesture.setEnabled(false);
+        defaultGesture.setChecked(true);
+        handShakeOps.deleteGestureData();
     }
 }

@@ -3,8 +3,10 @@ package com.salve.agrf.gestures.classifier;
 import android.content.Context;
 import android.util.Log;
 
+import com.salve.agrf.gestures.DefaultGesture;
 import com.salve.agrf.gestures.Gesture;
 import com.salve.agrf.gestures.classifier.featureExtraction.IFeatureExtractor;
+import com.salve.preferences.SalvePreferences;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +35,7 @@ public class GestureClassifier {
     }
 
     public boolean commitData() {
+        Log.e(TAG, "commitData()");
         if (activeTrainingSet != null && activeTrainingSet != "") {
             try {
                 FileOutputStream fos = new FileOutputStream(new File(context.getExternalFilesDir(null), activeTrainingSet + ".gst").toString());
@@ -54,6 +57,7 @@ public class GestureClassifier {
     }
 
     public boolean trainData(String trainingSetName, Gesture signal) {
+        Log.e(TAG, "trainData()");
         loadTrainingSet(trainingSetName);
         trainingSet.add(featureExtractor.sampleSignal(signal));
         return true;
@@ -61,13 +65,13 @@ public class GestureClassifier {
 
     @SuppressWarnings("unchecked")
     public void loadTrainingSet(String trainingSetName) {
+        Log.e(TAG, "loadTrainingSet() for " + trainingSetName);
+        Log.e(TAG, "Active training set is: " + activeTrainingSet);
         if (!trainingSetName.equals(activeTrainingSet)) {
             activeTrainingSet = trainingSetName;
             FileInputStream input;
             ObjectInputStream o;
             try {
-                File f = context.getExternalFilesDir(null);
-                Log.e(TAG, f == null ? "NULL external file" : f.getAbsolutePath());
                 input = new FileInputStream(new File(context.getExternalFilesDir(null), activeTrainingSet + ".gst"));
                 o = new ObjectInputStream(input);
                 trainingSet = (ArrayList<Gesture>) o.readObject();
@@ -80,8 +84,10 @@ public class GestureClassifier {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "FUCKED UP 2");
+                e.printStackTrace();
                 trainingSet = new ArrayList<>();
             }
+//            }
         }
     }
 
@@ -154,14 +160,22 @@ public class GestureClassifier {
             Log.e(TAG, "No Training Set Name specified");
             trainingSetName = "default";
         }
+
         if (!trainingSetName.equals(activeTrainingSet)) {
             loadTrainingSet(trainingSetName);
         }
 
+        Log.e(TAG, String.format("classifySignal(): trainingSetName = %s && activeTrainingSet = %s ", trainingSetName, activeTrainingSet));
+
         Distribution distribution = new Distribution();
         Gesture sampledSignal = featureExtractor.sampleSignal(signal);
 
+        if (trainingSetName.equals(SalvePreferences.DEFAULT_GESTURE)) {
+            trainingSet = DefaultGesture.getDefaultValues();
+        }
+
         for (Gesture s : trainingSet) {
+            Log.e(TAG, s.toString());
             double dist = DTWAlgorithm.calcDistance(s, sampledSignal);
             distribution.addEntry(s.getLabel(), dist);
         }

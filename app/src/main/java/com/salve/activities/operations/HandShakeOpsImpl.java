@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
 import com.salve.agrf.gestures.classifier.Distribution;
+import com.salve.preferences.SalvePreferences;
 import com.salve.tasks.UpdateHandshakeTask;
 
 /**
@@ -30,7 +33,6 @@ import com.salve.tasks.UpdateHandshakeTask;
 public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
 
     private static final String TAG = "HandShakeOpsImpl";
-    private final String activeTrainingSet = "handshake";
 
     private IBinder gestureListenerStub;
     private GestureConnectionService gestureConnectionService;
@@ -47,7 +49,16 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
             @Override
             public void onGestureLearned(String gestureName) throws RemoteException {
                 Log.e(TAG, String.format("%s learned", gestureName));
-                new UpdateHandshakeTask((HandShake)mActivity).execute();
+                new UpdateHandshakeTask((HandShake) mActivity).execute();
+
+                Context ctx = mActivity.getApplicationContext();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+                if (prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true)) {
+                    restartClassification(prefs.getString(SalvePreferences.DEFAULT_GESTURE, SalvePreferences.DEFAULT_GESTURE));
+                } else if (prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, true)) {
+                    restartClassification(prefs.getString(SalvePreferences.MY_OWN_GESTURE, SalvePreferences.MY_OWN_GESTURE));
+                }
+
             }
 
             @Override
@@ -120,10 +131,6 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
         try {
             gestureConnectionService
                     .getRecognitionService()
-                    .startClassificationMode(activeTrainingSet);
-            Log.e(TAG, "Starting classification");
-            gestureConnectionService
-                    .getRecognitionService()
                     .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
             Log.e(TAG, "Listener registered");
         } catch (RemoteException e) {
@@ -138,5 +145,29 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
 
     public void unbindService() {
         mActivity.unbindService(gestureConnectionService);
+    }
+
+    public void deleteGestureData() {
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .deleteTrainingSet(SalvePreferences.MY_OWN_GESTURE);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restartClassification(String activeTrainingSet) {
+        Log.e(TAG, "Restarting classification with new training set: " + activeTrainingSet);
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .stopClassificationMode();
+            gestureConnectionService
+                    .getRecognitionService()
+                    .startClassificationMode(activeTrainingSet);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }
