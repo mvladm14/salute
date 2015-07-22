@@ -55,15 +55,7 @@ public class PreferencesOpsImpl {
         preferences.add(create("Email", R.drawable.email));
         preferences.add(create("Address", R.drawable.address));
 
-        selectMainItems(preferences);
-
         return preferences;
-    }
-
-    private static void selectMainItems(List<PreferencesModel> list) {
-        for (int i = 0; i < 4; i++) {
-            list.get(i).setSelected(true);
-        }
     }
 
     private static PreferencesModel create(String s, int resId) {

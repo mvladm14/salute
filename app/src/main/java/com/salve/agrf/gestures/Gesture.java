@@ -50,11 +50,11 @@ public class Gesture implements Serializable {
     public String toString() {
         String valuesString = "";
         for (int i = 0; i < values.size(); i++) {
-            String list = "List " + i + " [";
-            for (float val : values.get(i)) {
-                list += val + " ";
+            String list = "sensorValues[counter++] = new float[]{";
+            for (int j = 0; j < values.get(i).length - 1; j++) {
+                list += values.get(i)[j] + "f, ";
             }
-            list += "]\n";
+            list += values.get(i)[values.get(i).length - 1]  + "f};\n";
             valuesString += list;
         }
         return this.label + ": " + " Values = " + valuesString;

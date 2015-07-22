@@ -3,9 +3,14 @@ package com.salve.agrf.gestures;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.microsoft.band.BandClient;
@@ -13,27 +18,29 @@ import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandInfo;
 import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
-import com.salve.activities.MainScreen;
-import com.salve.activities.models.PreferencesModel;
-import com.salve.activities.operations.PreferencesOpsImpl;
+import com.salve.activities.commands.SendNotificationCommand;
+import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
+import com.salve.activities.receivers.StopServiceReceiver;
 import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.agrf.gestures.classifier.GestureClassifier;
 import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
 import com.salve.agrf.gestures.recorder.GestureRecorder;
 import com.salve.agrf.gestures.recorder.GestureRecorderListener;
 import com.salve.band.sensors.registration.SensorRegistrationManager;
-import com.salve.band.tasks.AsyncResponse;
 import com.salve.band.tasks.BandConnectionTask;
+import com.salve.band.tasks.IBandConnectionAsyncResponse;
 import com.salve.bluetooth.BluetoothAdapterName;
 import com.salve.bluetooth.BluetoothUtilityOps;
+import com.salve.preferences.SalvePreferences;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GestureRecognitionService extends Service implements GestureRecorderListener, AsyncResponse {
+public class GestureRecognitionService extends Service implements GestureRecorderListener, IBandConnectionAsyncResponse {
 
     private final String TAG = "GestureRecognitionSvc";
+
     public static final String BAND_CONNECTION_STATUS = "BAND_CONNECTION_STATUS";
 
     private GestureRecorder recorder;
@@ -47,10 +54,12 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     private BandClient bandClient;
 
     private BluetoothUtilityOps bluetoothOps;
+    private BroadcastReceiver stopServiceReceiver;
 
     @Override
     public void onCreate() {
 
+        Log.e(TAG, "onCreate() called");
 
         bluetoothOps = BluetoothUtilityOps.getInstance(this);
 
@@ -79,12 +88,48 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     @Override
     public void onFinishedConnection(ConnectionState connectionState) {
         Log.e(TAG, connectionState.toString());
-        if (recorder != null) recorder.registerListener(this);
+        if (recorder != null) {
+            recorder.registerListener(this);
 
-        Intent intent = new Intent(this, MainScreen.class);
+            Context ctx = getApplicationContext();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            if (prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true)) {
+                startClassification(SalvePreferences.DEFAULT_GESTURE);
+            } else if (prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, true)) {
+                startClassification(SalvePreferences.MY_OWN_GESTURE);
+            }
+        }
+
+        registerReceiverToStopService();
+
+        sendBroadcastWithBandConnectionState(connectionState);
+    }
+
+    private void sendBroadcastWithBandConnectionState(ConnectionState connectionState) {
+        Intent intent = new Intent();
+        intent.setAction(GestureRecognitionServiceReceiver.PROCESS_RESPONSE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.putExtra(BAND_CONNECTION_STATUS, connectionState);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        sendBroadcast(intent);
+    }
+
+    private void registerReceiverToStopService() {
+        stopServiceReceiver = new StopServiceReceiver(this, bandClient);
+        registerReceiver(stopServiceReceiver, new IntentFilter(StopServiceReceiver.RECEIVER_FILTER));
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e(TAG, "onStartCommand() called");
+        new SendNotificationCommand(this).execute();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy() called");
+        unregisterReceiver(stopServiceReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -117,19 +162,24 @@ public class GestureRecognitionService extends Service implements GestureRecorde
             Log.e(TAG, "Trained");
         } else if (isClassifying) {
             recorder.pause(true);
+            Log.e(TAG, "Classifying with " + activeTrainingSet);
             Distribution distribution = classifier.classifySignal(activeTrainingSet, new Gesture(values, null));
             recorder.pause(false);
             if (distribution != null && distribution.size() > 0) {
                 Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
                 Log.e(TAG, "GESTURE was recognized");
 
-                sendContactViaBluetooth();
+                if (distribution.getBestDistance() < SalvePreferences.GESTURE_IDENTIFICATION_THRESHOLD) {
 
-                for (IGestureRecognitionListener listener : listeners) {
-                    try {
-                        listener.onGestureRecognized(distribution);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+                    //TODO
+                    //sendContactViaBluetooth();
+
+                    for (IGestureRecognitionListener listener : listeners) {
+                        try {
+                            listener.onGestureRecognized(distribution);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -140,14 +190,6 @@ public class GestureRecognitionService extends Service implements GestureRecorde
         ensureDiscoverable();
         bluetoothOps.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
         bluetoothOps.queryDevices();
-
-        List<PreferencesModel> preferencesModels = PreferencesOpsImpl.getPreferencesModels();
-        int count = 0;
-        for (PreferencesModel model : preferencesModels) {
-            if (model.isSelected()) count++;
-        }
-
-        Log.e(TAG, "TOTAL PREFERENCES SELECTED = " + count);
     }
 
     private void ensureDiscoverable() {
@@ -163,7 +205,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     public void deviceFound(List<BluetoothDevice> devices) {
 
         for (BluetoothDevice device : devices) {
-            if(device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())){
+            if (device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())) {
                 Log.e(TAG, "HAVE THE SAME NAME ==> try to connect");
                 bluetoothOps.connectDevice(device.getAddress());
             }
@@ -202,11 +244,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 
         @Override
         public void startClassificationMode(String trainingSetName) throws RemoteException {
-            Log.e(TAG, "Starting classification");
-            activeTrainingSet = trainingSetName;
-            isClassifying = true;
-            recorder.start();
-            classifier.loadTrainingSet(trainingSetName);
+            startClassification(trainingSetName);
         }
 
         @Override
@@ -245,7 +283,6 @@ public class GestureRecognitionService extends Service implements GestureRecorde
         public void stopClassificationMode() throws RemoteException {
             isClassifying = false;
             recorder.stop();
-
         }
 
         @Override
@@ -264,4 +301,12 @@ public class GestureRecognitionService extends Service implements GestureRecorde
             recorder.setThreshold(threshold);
         }
     };
+
+    private void startClassification(String trainingSetName) {
+        Log.e(TAG, "Starting classification for " + trainingSetName);
+        activeTrainingSet = trainingSetName;
+        isClassifying = true;
+        recorder.start();
+        classifier.loadTrainingSet(trainingSetName);
+    }
 }

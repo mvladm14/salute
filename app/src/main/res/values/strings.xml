@@ -1,4 +1,4 @@
-<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+<resources>
     <string name="app_name">Salve</string>
 
     <string name="hello_world">Hello world!</string>
@@ -7,36 +7,63 @@
     <string name="title_activity_loading_screen">LoadingScreen</string>
     <string name="loadingScreenSalve">Salve!</string>
     <string name="loadingScreenBeInTouch">Be in Touch</string>
-    <string name="title_activity_main_screen">MainScreen</string>
+    <string name="title_activity_main_screen">Salve!</string>
     <string name="mainScreenInformationMessage">Information Message Here</string>
     <string name="mainScreenStatusMessage">MainScreen</string>
-    <string name="not_connected">You are not connected to a device</string>
-    <string name="button_scan">Scan for devices</string>
-    <string name="none_paired">No devices have been paired</string>
-    <string name="none_found">No devices found</string>
-    <string name="scanning">scanning for devices...</string>
-    <string name="send">Send</string>
-    <string name="title_paired_devices">Paired Devices</string>
-    <string name="title_other_devices">Other Available Devices</string>
-    <string name="select_device">select a device to connect</string>
-    <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="title_not_connected">not connected</string>
-    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+
     <!-- Options Menu -->
     <string name="secure_connect">Connect a device - Secure</string>
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
-    <string name="title_activity_preferences">Preferences</string>
 
+    <!-- PREFERENCES ACTIVITY -->
+    <string name="title_activity_preferences">Preferences</string>
     <string name="preferences_infoMessage">Choose what you want to share</string>
     <string name="preferences_nameSurname">Name and Surname</string>
     <string name="preferences_mobilePhoneNumber">Mobile Phone No.</string>
     <string name="preferences_email">Email</string>
     <string name="preferences_address">Address</string>
     <string name="preferences_social">Social</string>
-    <string name="mainScreenInfoMessageOnBandConnected">You can shake hands with your friends and we will help you stay in touch.</string>
-    <string name="mainScreenInfoMessageOnBandNotConnected">In order to keep in touch with your friends, please make sure a connection is established between your wearable and your phone.</string>
+
+    <!-- MAIN_SCREEN ACTIVITY -->
+    <string name="mainScreenInfoMessageOnBandConnected">You can shake hands with your friends and we
+        will help you stay in touch.</string>
+    <string name="mainScreenInfoMessageOnBandNotConnected">In order to keep in touch with your
+        friends, please make sure a connection is established between your wearable and your phone.</string>
     <string name="wearableIsConnected">Wearable is connected.</string>
     <string name="wearableIsNotConnected">Wearable is not connected</string>
+    <string name="mainScreenSwipeMessage">Swipe to delete or import</string>
+
+
+    <!-- ABOUT ACTIVITY -->
+    <string name="title_activity_about">About</string>
+    <string name="txtVersionLabel">Version:</string>
+    <string name="txtVersionNoLabel">VersionNumber</string>
+    <string name="txtOwnerLabel">Owner</string>
+    <string name="txtOwnerValueLabel">OwnerValue</string>
+    <string name="applicationOwner">SalveLabs</string>
+    <string name="aboutFeedbackMessage">For any help / suggestions / feedback please contact us at
+        salve.support@outlook.com</string>
+    <string name="title_activity_hand_shake">HandShake</string>
+
+    <!-- HANDSHAKE ACTIVITY -->
+    <string name="handshake_mainMessage">While the below checkbox is checked our recognition engine
+        detects your handshakes by comparing with the handshake gestures from our database. For a
+        finer detection, feel free to uncheck it and to define your own gesture.</string>
+    <string name="handshake_defaultGestureLabel">Use default handshake</string>
+    <string name="handshake_myOwnGestureLabel">Use my own handshake</string>
+    <string name="handshake_buttonDefineOwnGesture">Define my own handshake</string>
+    <string name="handshake_alertDialog_title">Handshake gesture</string>
+    <string name="handshake_alertDialog_hint">Hint: Control the application by using the hand which is not wearing the band.</string>
+    <string name="handshake_alertDialog_instruction1">1. Press the Start button.</string>
+    <string name="handshake_alertDialog_instruction2">2. Perform your handshake gesture with the arm wearing the band.</string>
+    <string name="handshake_alertDialog_instruction3">3. Finally, press the Stop button.</string>
+    <string name="handshake_alertDialog_start">Start</string>
+    <string name="handshake_alertDialog_stop">Stop</string>
+    <string name="handshake_alertDialog_cancel">Cancel</string>
+
+    <!-- NOTIFICATION-->
+    <string name="notification_stopService">Stop</string>
+    <string name="notification_message">I am detecting your handshakes in background...</string>
+
 </resources>

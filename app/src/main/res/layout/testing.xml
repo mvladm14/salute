@@ -29,20 +29,11 @@
             android:text="Vlad #1 - get contacts" />
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="connect"
-            android:text="Vlad #2 - connect to band" />
-
-
-        <Button
             android:id="@+id/button99"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="training"
             android:text="Start Training" />
-
 
         <FrameLayout
             android:id="@+id/sample_content_fragment"

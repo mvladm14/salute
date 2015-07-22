@@ -1,0 +1,141 @@
+package com.salve.activities.operations;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+
+import com.salve.R;
+import com.salve.activities.HandShake;
+import com.salve.activities.asyncReplies.IGestureConnectionServiceAsyncReply;
+import com.salve.activities.operations.listeners.handshake.AlertDialogOnShowListener;
+import com.salve.agrf.gestures.GestureConnectionService;
+import com.salve.agrf.gestures.GestureRecognitionService;
+import com.salve.agrf.gestures.IGestureRecognitionListener;
+import com.salve.agrf.gestures.classifier.Distribution;
+import com.salve.preferences.SalvePreferences;
+import com.salve.tasks.UpdateHandshakeTask;
+
+/**
+ * Created by Vlad on 7/18/2015.
+ */
+public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
+
+    private static final String TAG = "HandShakeOpsImpl";
+
+    private IBinder gestureListenerStub;
+    private GestureConnectionService gestureConnectionService;
+    private Activity mActivity;
+
+    public HandShakeOpsImpl(Activity activity) {
+
+        this.mActivity = activity;
+
+        gestureConnectionService = new GestureConnectionService(this);
+
+        gestureListenerStub = new IGestureRecognitionListener.Stub() {
+
+            @Override
+            public void onGestureLearned(String gestureName) throws RemoteException {
+                Log.e(TAG, String.format("%s learned", gestureName));
+                new UpdateHandshakeTask((HandShake) mActivity).execute();
+
+                Context ctx = mActivity.getApplicationContext();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+                if (prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true)) {
+                    restartClassification(prefs.getString(SalvePreferences.DEFAULT_GESTURE, SalvePreferences.DEFAULT_GESTURE));
+                } else if (prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, true)) {
+                    restartClassification(prefs.getString(SalvePreferences.MY_OWN_GESTURE, SalvePreferences.MY_OWN_GESTURE));
+                }
+
+            }
+
+            @Override
+            public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
+                Log.e(TAG, String.format("Training set %s deleted", trainingSet));
+            }
+
+            @Override
+            public void onGestureRecognized(final Distribution distribution) throws RemoteException {
+                Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
+            }
+        };
+
+        Intent bindIntent = new Intent(mActivity, GestureRecognitionService.class);
+        mActivity.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
+    }
+
+    public void defineHandShake() {
+
+        final AlertDialog alertDialog = createAlertDialog(mActivity);
+        alertDialog.setOnShowListener(new AlertDialogOnShowListener(alertDialog, gestureConnectionService, mActivity));
+        alertDialog.show();
+    }
+
+    private AlertDialog createAlertDialog(Activity activity) {
+        String allertDialogMessage =
+                String.format("%s\n\n%s\n%s\n%s",
+                        activity.getString(R.string.handshake_alertDialog_hint),
+                        activity.getString(R.string.handshake_alertDialog_instruction1),
+                        activity.getString(R.string.handshake_alertDialog_instruction2),
+                        activity.getString(R.string.handshake_alertDialog_instruction3));
+
+        return new AlertDialog.Builder(activity)
+                .setTitle(R.string.handshake_alertDialog_title)
+                .setMessage(allertDialogMessage)
+                .setPositiveButton(R.string.handshake_alertDialog_start, null)
+                .setNegativeButton(R.string.handshake_alertDialog_cancel, null)
+                .setIcon(R.drawable.handshake)
+                .create();
+    }
+
+    @Override
+    public void onServiceConnected() {
+        Log.e(TAG, "Connected to the background service");
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            Log.e(TAG, "Listener registered");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected() {
+    }
+
+    public void unbindService() {
+        mActivity.unbindService(gestureConnectionService);
+    }
+
+    public void deleteGestureData() {
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .deleteTrainingSet(SalvePreferences.MY_OWN_GESTURE);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restartClassification(String activeTrainingSet) {
+        Log.e(TAG, "Restarting classification with new training set: " + activeTrainingSet);
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .stopClassificationMode();
+            gestureConnectionService
+                    .getRecognitionService()
+                    .startClassificationMode(activeTrainingSet);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+}

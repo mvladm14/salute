@@ -1,6 +1,9 @@
 package com.salve.activities.adapters;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +19,6 @@ import com.salve.activities.models.PreferencesModel;
 import java.util.List;
 
 public class InteractiveArrayAdapter extends ArrayAdapter<PreferencesModel> {
-
-    private static final String TAG = "InteractiveArrayAdapter";
 
     private final List<PreferencesModel> list;
     private final Activity context;
@@ -36,7 +37,7 @@ public class InteractiveArrayAdapter extends ArrayAdapter<PreferencesModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = null;
+        View view;
         if (convertView == null) {
             LayoutInflater inflator = context.getLayoutInflater();
             view = inflator.inflate(R.layout.preferences_rowbuttonlayout, null);
@@ -54,6 +55,11 @@ public class InteractiveArrayAdapter extends ArrayAdapter<PreferencesModel> {
                                     .getTag();
                             element.setSelected(buttonView.isChecked());
 
+                            Context ctx = context.getApplicationContext();
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(viewHolder.text.getText().toString(), buttonView.isChecked());
+                            editor.apply();
                         }
                     });
             view.setTag(viewHolder);
@@ -65,7 +71,11 @@ public class InteractiveArrayAdapter extends ArrayAdapter<PreferencesModel> {
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.text.setText(list.get(position).getName());
         holder.imageView.setImageResource(list.get(position).getResId());
-        holder.checkbox.setChecked(list.get(position).isSelected());
+
+        Context ctx = context.getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        holder.checkbox.setChecked(prefs.getBoolean(holder.text.getText().toString(), true));
+
         return view;
     }
 }

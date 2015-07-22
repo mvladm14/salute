@@ -6,5 +6,7 @@ import java.util.List;
  * Created by Vlad on 6/19/2015.
  */
 public interface GestureRecorderListener {
-    public void onGestureRecorded(List<float[]> values);
+
+    void onGestureRecorded(List<float[]> values);
+
 }

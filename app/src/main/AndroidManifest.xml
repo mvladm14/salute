@@ -32,29 +32,25 @@
         <activity
             android:name=".activities.TestingActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:label="@string/app_name" />
         <activity
             android:name=".activities.LoadingScreen"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
-
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.MainScreen"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/title_activity_main_screen"
-            android:screenOrientation="portrait" />
-
+            android:label="@string/title_activity_main_screen">
+        </activity>
         <activity
             android:name=".activities.Preferences"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_preferences" />
 
         <service
@@ -63,6 +59,12 @@
             android:label="GestureRecognitionService"
             android:process=":salveBackground" />
 
+        <activity
+            android:name=".activities.About"
+            android:label="@string/title_activity_about"></activity>
+        <activity
+            android:name=".activities.HandShake"
+            android:label="@string/title_activity_hand_shake"></activity>
     </application>
 
 </manifest>

@@ -1,44 +1,24 @@
 package com.salve.activities;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListView;
+import android.widget.TextView;
 
 import com.salve.R;
-import com.salve.activities.adapters.InteractiveArrayAdapter;
-import com.salve.activities.adapters.SocialExpandableListAdapter;
-import com.salve.activities.models.PreferencesModel;
 import com.salve.activities.navigation.NavigationManager;
-import com.salve.activities.operations.PreferencesOpsImpl;
 
-public class Preferences extends AppCompatActivity {
+public class About extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preferences);
+        setContentView(R.layout.activity_about);
 
-        initializeFields();
-    }
-
-    private void initializeFields() {
-        initializeUIFields();
-    }
-
-    private void initializeUIFields() {
-
-        ExpandableListView expandablelistView = (ExpandableListView) findViewById(R.id.preferences_expandableListView);
-        SocialExpandableListAdapter socialExpandableAdapter = new SocialExpandableListAdapter(this, PreferencesOpsImpl.getGroups());
-        expandablelistView.setAdapter(socialExpandableAdapter);
-
-        ListView listView = (ListView) findViewById(R.id.preferences_listView);
-        ArrayAdapter<PreferencesModel> adapter = new InteractiveArrayAdapter(this, PreferencesOpsImpl.getPreferencesModels());
-        listView.setAdapter(adapter);
-
+        this.initializeFields();
     }
 
     @Override
@@ -67,5 +47,26 @@ public class Preferences extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initializeFields() {
+        initializeUIFields();
+    }
+
+    private void initializeUIFields() {
+        PackageInfo pInfo;
+        String version = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        TextView versionTV = (TextView) findViewById(R.id.txtVersionNoLabel);
+        versionTV.setText(version);
+
+        TextView ownerTV = (TextView) findViewById(R.id.txtOwnerValueLabel);
+        ownerTV.setText(R.string.applicationOwner);
     }
 }

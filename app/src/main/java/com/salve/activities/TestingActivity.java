@@ -1,5 +1,6 @@
 package com.salve.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -10,20 +11,23 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.salve.R;
-import com.salve.activities.operations.LoadingScreenOpsImpl;
+import com.salve.activities.asyncReplies.IGestureConnectionServiceAsyncReply;
 import com.salve.agrf.gestures.GestureConnectionService;
+import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
+import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.contacts.AccountUtils;
 
 
-public class TestingActivity extends AppCompatActivity {
+public class TestingActivity extends AppCompatActivity implements IGestureConnectionServiceAsyncReply {
 
     private static final String TAG = "TestingActivity";
 
     private TextView trainingTV;
-    private GestureConnectionService gestureConnectionService;
+
     private IBinder gestureListenerStub;
+    private GestureConnectionService gestureConnectionService;
 
 
     @Override
@@ -33,31 +37,42 @@ public class TestingActivity extends AppCompatActivity {
 
         trainingTV = (TextView) findViewById(R.id.button99);
 
-        gestureConnectionService = LoadingScreenOpsImpl.gestureConnectionService;
-        gestureListenerStub = LoadingScreenOpsImpl.gestureListenerStub;
+        gestureConnectionService = new GestureConnectionService(this);
+
+        gestureListenerStub = new IGestureRecognitionListener.Stub() {
+
+            @Override
+            public void onGestureLearned(String gestureName) throws RemoteException {
+                Log.e(TAG, String.format("%s learned", gestureName));
+            }
+
+            @Override
+            public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
+                Log.e(TAG, String.format("Training set %s deleted", trainingSet));
+            }
+
+            @Override
+            public void onGestureRecognized(final Distribution distribution) throws RemoteException {
+                Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
+            }
+        };
+
+        Intent bindIntent = new Intent(this, GestureRecognitionService.class);
+        this.bindService(bindIntent, gestureConnectionService, BIND_AUTO_CREATE);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main_screen, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void connect(View view) {
-        final String activeTrainingSet = "handshake";
-        try {
-            gestureConnectionService
-                    .getRecognitionService()
-                    .startClassificationMode(activeTrainingSet);
-            gestureConnectionService
-                    .getRecognitionService()
-                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-        } catch (RemoteException e1) {
-            e1.printStackTrace();
-        }
-
+    @Override
+    protected void onDestroy() {
+        this.unbindService(gestureConnectionService);
+        super.onDestroy();
     }
 
     public void getContacts(View view) {
@@ -85,4 +100,23 @@ public class TestingActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onServiceConnected() {
+        final String activeTrainingSet = "handshake";
+        try {
+            gestureConnectionService
+                    .getRecognitionService()
+                    .startClassificationMode(activeTrainingSet);
+            gestureConnectionService
+                    .getRecognitionService()
+                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+        } catch (RemoteException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected() {
+
+    }
 }

@@ -1,16 +1,36 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.salve.activities.MainScreen">
 
     <item
         android:id="@+id/menu_preferences"
         android:alphabeticShortcut="a"
+        android:icon="@drawable/star_icon"
         android:orderInCategory="1"
-        android:title="@string/menu_preferences" />
+        android:title="@string/menu_preferences"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_handshake"
+        android:alphabeticShortcut="b"
+        android:icon="@drawable/handshake"
+        android:orderInCategory="2"
+        android:title="Handshake"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:alphabeticShortcut="c"
+        android:icon="@drawable/about_icon"
+        android:orderInCategory="3"
+        android:title="About"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_testing"
-        android:alphabeticShortcut="b"
-        android:orderInCategory="2"
+        android:alphabeticShortcut="z"
+        android:orderInCategory="10"
         android:title="Testing" />
+
 </menu>

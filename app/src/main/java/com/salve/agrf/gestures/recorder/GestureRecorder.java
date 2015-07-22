@@ -24,7 +24,7 @@ public class GestureRecorder implements BandAccelerometerEventListener {
     }
 
     final int MIN_GESTURE_SIZE = 8;
-    float THRESHOLD = 0.4f;
+    float THRESHOLD = 0.3f;
     boolean isRecording;
 
     int stepsSinceNoMovement;
@@ -65,7 +65,7 @@ public class GestureRecorder implements BandAccelerometerEventListener {
         if (recordMode == RecordMode.PUSH_TO_GESTURE) {
             isRecording = pushed;
             if (isRecording) {
-                gestureValues = new ArrayList<float[]>();
+                gestureValues = new ArrayList<>();
             } else {
                 if (gestureValues.size() > MIN_GESTURE_SIZE) {
                     listener.onGestureRecorded(gestureValues);
@@ -100,7 +100,7 @@ public class GestureRecorder implements BandAccelerometerEventListener {
                 } else if (calcVectorNorm(value) >= THRESHOLD) {
                     isRecording = true;
                     stepsSinceNoMovement = 0;
-                    gestureValues = new ArrayList<float[]>();
+                    gestureValues = new ArrayList<>();
                     gestureValues.add(value);
                 }
                 if (stepsSinceNoMovement == 10) {
