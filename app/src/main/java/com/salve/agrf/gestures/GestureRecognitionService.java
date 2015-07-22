@@ -61,7 +61,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 
         Log.e(TAG, "onCreate() called");
 
-        bluetoothOps = BluetoothUtilityOps.getInstance(this);
+        //bluetoothOps = BluetoothUtilityOps.getInstance(this);
 
         BandInfo[] pairedBands = BandClientManager.getInstance().getPairedBands();
 
@@ -140,7 +140,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
     @Override
     public boolean onUnbind(Intent intent) {
         Log.e(TAG, "onUnbind");
-        recorder.unregisterListener(this);
+        //recorder.unregisterListener(this);
         return super.onUnbind(intent);
     }
 
@@ -168,9 +168,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
             if (distribution != null && distribution.size() > 0) {
                 Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
                 Log.e(TAG, "GESTURE was recognized");
-
                 if (distribution.getBestDistance() < SalvePreferences.GESTURE_IDENTIFICATION_THRESHOLD) {
-
                     //TODO
                     //sendContactViaBluetooth();
 
