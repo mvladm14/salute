@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.salve.R;
+import com.salve.activities.navigation.NavigationManager;
 
 public class About extends AppCompatActivity {
 
@@ -29,16 +30,22 @@ public class About extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_preferences:
+                NavigationManager.goToActivity(this, Preferences.class);
+                break;
+            case R.id.menu_testing:
+                NavigationManager.goToActivity(this, TestingActivity.class);
+                break;
+            case R.id.menu_about:
+                NavigationManager.goToActivity(this, About.class);
+                break;
+            case R.id.menu_handshake:
+                NavigationManager.goToActivity(this, HandShake.class);
+                break;
+            default:
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -47,7 +54,7 @@ public class About extends AppCompatActivity {
     }
 
     private void initializeUIFields() {
-        PackageInfo pInfo = null;
+        PackageInfo pInfo;
         String version = null;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);

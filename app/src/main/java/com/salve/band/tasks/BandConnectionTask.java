@@ -19,7 +19,6 @@ public class BandConnectionTask extends AsyncTask<BandPendingResult<ConnectionSt
         ConnectionState connectionState = null;
         try {
             connectionState = bandPendingResults[0].await();
-            Thread.sleep(2000);
         } catch (InterruptedException | BandException e) {
             e.printStackTrace();
         }

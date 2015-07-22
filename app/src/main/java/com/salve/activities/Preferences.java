@@ -1,6 +1,5 @@
 package com.salve.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -9,11 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
-import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.salve.R;
 import com.salve.activities.adapters.InteractiveArrayAdapter;
 import com.salve.activities.adapters.SocialExpandableListAdapter;
 import com.salve.activities.models.PreferencesModel;
+import com.salve.activities.navigation.NavigationManager;
 import com.salve.activities.operations.PreferencesOpsImpl;
 
 public class Preferences extends AppCompatActivity {
@@ -51,17 +50,22 @@ public class Preferences extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_preferences) {
-            Intent intent = new Intent(this, Preferences.class);
-            startActivity(intent);
+        switch (item.getItemId()) {
+            case R.id.menu_preferences:
+                NavigationManager.goToActivity(this, Preferences.class);
+                break;
+            case R.id.menu_testing:
+                NavigationManager.goToActivity(this, TestingActivity.class);
+                break;
+            case R.id.menu_about:
+                NavigationManager.goToActivity(this, About.class);
+                break;
+            case R.id.menu_handshake:
+                NavigationManager.goToActivity(this, HandShake.class);
+                break;
+            default:
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

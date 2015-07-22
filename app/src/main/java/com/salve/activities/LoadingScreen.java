@@ -7,15 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.salve.R;
-import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
-import com.salve.activities.operations.ILoadingScreenOps;
 import com.salve.activities.operations.LoadingScreenOpsImpl;
 
 public class LoadingScreen extends Activity {
 
     private static final String TAG = "LoadingScreen";
-    private ILoadingScreenOps screenOps;
-    private GestureRecognitionServiceReceiver receiver;
+    private LoadingScreenOpsImpl screenOps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,29 +20,7 @@ public class LoadingScreen extends Activity {
         setContentView(R.layout.activity_loading_screen);
         initializeNonUIFields();
 
-        screenOps.registerReceiver(receiver);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_loading_screen, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        screenOps.registerReceiver();
     }
 
     private void initializeNonUIFields() {
@@ -55,8 +30,8 @@ public class LoadingScreen extends Activity {
 
     @Override
     protected void onDestroy() {
-        Log.e(TAG,"onDestroy() called.");
-        screenOps.unregisterReceiver(receiver);
+        Log.e(TAG, "onDestroy() called.");
+        screenOps.unregisterReceiver();
         super.onDestroy();
     }
 }

@@ -2,7 +2,6 @@ package com.salve.activities.operations;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
@@ -10,19 +9,14 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import com.salve.R;
 import com.salve.activities.HandShake;
 import com.salve.activities.asyncReplies.IGestureConnectionServiceAsyncReply;
-import com.salve.activities.commands.Command;
-import com.salve.activities.commands.CommandFactory;
-import com.salve.activities.commands.CommandType;
+import com.salve.activities.operations.listeners.handshake.AlertDialogOnShowListener;
 import com.salve.agrf.gestures.GestureConnectionService;
 import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
-import com.salve.agrf.gestures.IGestureRecognitionService;
 import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.preferences.SalvePreferences;
 import com.salve.tasks.UpdateHandshakeTask;
@@ -78,34 +72,9 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
 
     public void defineHandShake() {
 
-        final AlertDialog d = createAlertDialog(mActivity);
-
-        d.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-
-                final Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        IGestureRecognitionService recognitionService = gestureConnectionService.getRecognitionService();
-                        Command command;
-
-                        if (b.getText() == mActivity.getResources().getString(R.string.handshake_alertDialog_start)) {
-                            command = CommandFactory.create(CommandType.StartTraining, recognitionService);
-                            b.setText(mActivity.getResources().getString(R.string.handshake_alertDialog_stop));
-                        } else {
-                            command = CommandFactory.create(CommandType.StopTraining, recognitionService);
-                            b.setText(mActivity.getResources().getString(R.string.handshake_alertDialog_start));
-                        }
-
-                        command.execute();
-                    }
-                });
-            }
-        });
-        d.show();
+        final AlertDialog alertDialog = createAlertDialog(mActivity);
+        alertDialog.setOnShowListener(new AlertDialogOnShowListener(alertDialog, gestureConnectionService, mActivity));
+        alertDialog.show();
     }
 
     private AlertDialog createAlertDialog(Activity activity) {
@@ -140,7 +109,6 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
 
     @Override
     public void onServiceDisconnected() {
-
     }
 
     public void unbindService() {

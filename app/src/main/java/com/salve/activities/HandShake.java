@@ -5,18 +5,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.salve.R;
+import com.salve.activities.navigation.NavigationManager;
 import com.salve.activities.operations.HandShakeOpsImpl;
+import com.salve.activities.operations.listeners.handshake.GestureLearnedTextViewTextChangedListener;
+import com.salve.activities.operations.listeners.handshake.GestureRadioButtonCheckedChangedListener;
 import com.salve.preferences.SalvePreferences;
 
 import java.text.SimpleDateFormat;
@@ -59,28 +59,7 @@ public class HandShake extends AppCompatActivity {
 
         trashImageView.setVisibility(View.INVISIBLE);
 
-        gestureLearnedTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 0) {
-                    trashImageView.setVisibility(View.INVISIBLE);
-                    myOwnGesture.setEnabled(false);
-                } else {
-                    trashImageView.setVisibility(View.VISIBLE);
-                    myOwnGesture.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+        gestureLearnedTextView.addTextChangedListener(new GestureLearnedTextViewTextChangedListener(myOwnGesture, trashImageView));
 
         Context ctx = getApplicationContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -88,37 +67,12 @@ public class HandShake extends AppCompatActivity {
         myOwnGesture.setChecked(prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, false));
         gestureLearnedTextView.setText(prefs.getString(SalvePreferences.OWN_GESTURE_DEFINE_DATE, ""));
 
-        myOwnGesture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    defaultGesture.setChecked(false);
-                    handShakeOps.restartClassification(SalvePreferences.MY_OWN_GESTURE);
-                }
-                Context ctx = getApplicationContext();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(SalvePreferences.MY_OWN_GESTURE, b);
-                editor.apply();
+        myOwnGesture.setOnCheckedChangeListener(
+                new GestureRadioButtonCheckedChangedListener(this, defaultGesture, SalvePreferences.MY_OWN_GESTURE));
 
-            }
-        });
+        defaultGesture.setOnCheckedChangeListener(
+                new GestureRadioButtonCheckedChangedListener(this, myOwnGesture, SalvePreferences.DEFAULT_GESTURE));
 
-        defaultGesture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    myOwnGesture.setChecked(false);
-                    handShakeOps.restartClassification(SalvePreferences.DEFAULT_GESTURE);
-                }
-
-                Context ctx = getApplicationContext();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(SalvePreferences.DEFAULT_GESTURE, b);
-                editor.apply();
-            }
-        });
     }
 
     @Override
@@ -130,16 +84,22 @@ public class HandShake extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_preferences:
+                NavigationManager.goToActivity(this, Preferences.class);
+                break;
+            case R.id.menu_testing:
+                NavigationManager.goToActivity(this, TestingActivity.class);
+                break;
+            case R.id.menu_about:
+                NavigationManager.goToActivity(this, About.class);
+                break;
+            case R.id.menu_handshake:
+                NavigationManager.goToActivity(this, HandShake.class);
+                break;
+            default:
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -173,5 +133,9 @@ public class HandShake extends AppCompatActivity {
         myOwnGesture.setEnabled(false);
         defaultGesture.setChecked(true);
         handShakeOps.deleteGestureData();
+    }
+
+    public void restartClassification(String activeTrainingSet) {
+        handShakeOps.restartClassification(activeTrainingSet);
     }
 }
