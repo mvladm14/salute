@@ -11,7 +11,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.salve.contacts.AccountUtils;
+import com.salve.contacts.ContactInformation;
 import com.salve.contacts.ImportContact;
 
 import java.io.IOException;
@@ -218,7 +218,7 @@ public class BluetoothService {
      *
      * @param userProfile The bytes to write
      */
-    public void write(AccountUtils.UserProfile userProfile) {
+    public void write(ContactInformation userProfile) {
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -434,12 +434,14 @@ public class BluetoothService {
                 try {
                     // Read from the InputStream
                     ObjectInputStream o = new ObjectInputStream(mmInStream);
-                    AccountUtils.UserProfile receivedContact;
+                    ContactInformation receivedContact;
                     try {
-                        receivedContact = (AccountUtils.UserProfile) o.readObject();
+                        receivedContact = (ContactInformation) o.readObject();
                         Log.e("RECEIVED CONTACT: ", receivedContact.toString());
                         ImportContact op = new ImportContact();
-                        op.updateContact(callback.getGestureRecognitionService(), receivedContact);
+                        //TODO
+                        op.updateContact(callback.getContext(), receivedContact);
+                        //op.updateContact(callback.getGestureRecognitionService(), receivedContact);
                         callback.changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
                         //TODO: aici s-ar putea apela stop() in loc de onDestroy()
                     } catch (ClassNotFoundException e) {
