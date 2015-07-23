@@ -1,9 +1,6 @@
 package com.salve.activities;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,7 +15,7 @@ import com.microsoft.band.ConnectionState;
 import com.salve.R;
 import com.salve.activities.adapters.ContactsListViewAdapter;
 import com.salve.activities.navigation.NavigationManager;
-import com.salve.agrf.gestures.GestureRecognitionService;
+import com.salve.band.tasks.BandConnectionAsyncResponseImpl;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -34,7 +31,7 @@ public class MainScreen extends AppCompatActivity {
         Log.e(TAG, "onCreate() called");
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            connectionState = (ConnectionState) extras.getSerializable(GestureRecognitionService.BAND_CONNECTION_STATUS);
+            connectionState = (ConnectionState) extras.getSerializable(BandConnectionAsyncResponseImpl.BAND_CONNECTION_STATUS);
             Log.e(TAG, "Band ConnectionState is: " + connectionState + "");
         }
 
