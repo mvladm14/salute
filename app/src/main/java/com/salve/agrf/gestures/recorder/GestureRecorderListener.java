@@ -1,5 +1,7 @@
 package com.salve.agrf.gestures.recorder;
 
+import android.os.IBinder;
+
 import java.util.List;
 
 /**
@@ -9,4 +11,7 @@ public interface GestureRecorderListener {
 
     void onGestureRecorded(List<float[]> values);
 
+    IBinder getBinder();
+
+    void startClassification(String defaultGesture);
 }

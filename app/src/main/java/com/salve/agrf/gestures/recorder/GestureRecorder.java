@@ -29,13 +29,11 @@ public class GestureRecorder implements BandAccelerometerEventListener {
 
     int stepsSinceNoMovement;
     ArrayList<float[]> gestureValues;
-    Context context;
     GestureRecorderListener listener;
     boolean isRunning;
     RecordMode recordMode = RecordMode.MOTION_DETECTION;
 
-    public GestureRecorder(SensorRegistrationManager sensorRegistrationManager, Context context) {
-        this.context = context;
+    public GestureRecorder(SensorRegistrationManager sensorRegistrationManager) {
         this.sensorRegistrationManager = sensorRegistrationManager;
     }
 

@@ -26,7 +26,7 @@ public class SensorRegistrationManager {
             boolean registered = bandClient.getSensorManager().registerAccelerometerEventListener(
                     bandAccelerometerEventListener,
                     SampleRate.MS128);
-            Log.e(TAG, "Accelerometer registered " + (registered ? "successfully." : "unsuccessfully."));
+            Log.e(TAG, "BAND Accelerometer registered " + (registered ? "successfully." : "unsuccessfully."));
         } catch (BandIOException ex) {
             // handle BandException
             ex.printStackTrace();
