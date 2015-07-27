@@ -43,6 +43,7 @@ public class SendNotificationCommand implements Command {
                         .setContentTitle("Salve")
                         .setContentText(mService.getResources().getString(R.string.notification_message))
                         .setVisibility(Notification.VISIBILITY_PUBLIC)
+                        .setPriority(Notification.PRIORITY_MAX)
                         .addAction(R.drawable.stop_icon,
                                 mService.getResources().getString(R.string.notification_stopService),
                                 stopServiceIntent);

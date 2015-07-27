@@ -39,8 +39,8 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
 
     private BroadcastReceiver stopServiceReceiver;
 
-    public BandConnectionAsyncResponseImpl() {
-
+    public BandConnectionAsyncResponseImpl(Service service) {
+        this(service, null);
     }
 
     public BandConnectionAsyncResponseImpl(Service service, BandClient bandClient) {
@@ -55,7 +55,7 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
     @Override
     public void onFinishedConnection(ConnectionState connectionState) {
         Log.e(TAG, connectionState.toString());
-        if (gestureRecorder != null) {
+        if (connectionState == ConnectionState.CONNECTED && gestureRecorder != null) {
             gestureRecorder.registerListener(gestureRecorderListener);
 
             Context ctx = service.getApplicationContext();
@@ -73,6 +73,11 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
     }
 
     @Override
+    public IBinder getBinder() {
+        return gestureRecorderListener.getBinder();
+    }
+
+    @Override
     public void unregisterListener() {
         gestureRecorder.unregisterListener(gestureRecorderListener);
     }
@@ -80,11 +85,6 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
     @Override
     public void unregisterStopReceiver() {
         service.unregisterReceiver(stopServiceReceiver);
-    }
-
-    @Override
-    public IBinder getBinder() {
-        return gestureRecorderListener.getBinder();
     }
 
     private void registerReceiverToStopService() {

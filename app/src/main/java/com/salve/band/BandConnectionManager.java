@@ -41,7 +41,7 @@ public class BandConnectionManager {
 
         } else {
 
-            bandConnectionAsyncResponse = new BandConnectionAsyncResponseImpl();
+            bandConnectionAsyncResponse = new BandConnectionAsyncResponseImpl(service);
 
             bandConnectionAsyncResponse.onFinishedConnection(ConnectionState.UNBOUND);
 

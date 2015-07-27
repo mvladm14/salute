@@ -10,10 +10,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.util.Patterns;
-
-import com.salve.activities.models.PreferencesModel;
-import com.salve.activities.operations.PreferencesOpsImpl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +22,9 @@ import java.util.regex.Matcher;
  * Created by rroxa_000 on 7/18/2015.
  */
 public class ContactInformationUtility implements Serializable {
+
+    private static final String TAG = "ContactInfoUtility";
+
     public static ContactInformation getUserProfile(Context context) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
                 ? getUserProfileOnIcsDevice(context) :
@@ -54,6 +55,7 @@ public class ContactInformationUtility implements Serializable {
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private static ContactInformation getUserProfileOnIcsDevice(Context context) {
+        Log.e(TAG, "getUserProfileOnIcsDevice");
         final ContentResolver content = context.getContentResolver();
 
         final Cursor cursor = content.query(
@@ -89,9 +91,6 @@ public class ContactInformationUtility implements Serializable {
 
     private static ContactInformation populateContact(Cursor cursor) {
         final ContactInformation user_profile = new ContactInformation();
-        PreferencesModel nameAndSurname = PreferencesOpsImpl.getPreferencesModels().get(0);
-        PreferencesModel mobilePhoneNo = PreferencesOpsImpl.getPreferencesModels().get(1);
-        PreferencesModel email = PreferencesOpsImpl.getPreferencesModels().get(2);
         String mime_type;
         List<String> homeEmails = new ArrayList<>();
         List<String> workEmails = new ArrayList<>();
@@ -105,13 +104,11 @@ public class ContactInformationUtility implements Serializable {
 
         while (cursor.moveToNext()) {
             mime_type = cursor.getString(ProfileQuery.MIME_TYPE);
-            if (email.isSelected() && mime_type.equals(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)) {
+            if (mime_type.equals(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)) {
                 addEmails(cursor, user_profile, homeEmails, workEmails, customEmails, otherEmails);
-            } else if (nameAndSurname.isSelected() &&
-                    mime_type.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)) {
+            } else if (mime_type.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)) {
                 addName(cursor, user_profile);
-            } else if (mobilePhoneNo.isSelected() &&
-                    mime_type.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) {
+            } else if (mime_type.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) {
                 addPhoneNumbers(cursor, user_profile, homeNo, workNo, mobileNo, otherNo, customNo);
             }
         }

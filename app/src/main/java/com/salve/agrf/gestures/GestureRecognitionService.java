@@ -8,11 +8,12 @@ import android.util.Log;
 
 import com.salve.activities.commands.SendNotificationCommand;
 import com.salve.band.BandConnectionManager;
+import com.salve.bluetooth.BluetoothDevicesFoundResponse;
 import com.salve.bluetooth.BluetoothUtilityOps;
 
 import java.util.List;
 
-public class GestureRecognitionService extends Service {
+public class GestureRecognitionService extends Service implements BluetoothDevicesFoundResponse {
 
     private final String TAG = "GestureRecognitionSvc";
 
@@ -22,13 +23,10 @@ public class GestureRecognitionService extends Service {
 
     @Override
     public void onCreate() {
-
         Log.e(TAG, "onCreate() called");
 
         this.bluetoothOps = BluetoothUtilityOps.getInstance(this);
-
         bandConnectionManager = new BandConnectionManager(this);
-        bandConnectionManager.connectToBand();
 
         super.onCreate();
     }
@@ -36,7 +34,10 @@ public class GestureRecognitionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand() called");
+
         new SendNotificationCommand(this).execute();
+        bandConnectionManager.connectToBand();
+
         return START_STICKY;
     }
 
@@ -60,8 +61,8 @@ public class GestureRecognitionService extends Service {
         return super.onUnbind(intent);
     }
 
-    public void deviceFound(List<BluetoothDevice> devices) {
-
+    @Override
+    public void onBluetoothDevicesFound(List<BluetoothDevice> devices) {
         for (BluetoothDevice device : devices) {
             if (device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())) {
                 Log.e(TAG, "HAVE THE SAME NAME ==> try to connect");

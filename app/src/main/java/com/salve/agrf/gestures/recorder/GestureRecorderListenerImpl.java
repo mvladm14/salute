@@ -1,20 +1,16 @@
 package com.salve.agrf.gestures.recorder;
 
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
 import com.salve.agrf.gestures.Gesture;
-import com.salve.agrf.gestures.GestureRecognitionService;
 import com.salve.agrf.gestures.IGestureRecognitionListener;
 import com.salve.agrf.gestures.IGestureRecognitionService;
 import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.agrf.gestures.classifier.GestureClassifier;
 import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
-import com.salve.bluetooth.BluetoothAdapterName;
 import com.salve.bluetooth.BluetoothUtilityOps;
 import com.salve.preferences.SalvePreferences;
 
@@ -22,9 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Vlad on 7/22/2015.
- */
 public class GestureRecorderListenerImpl implements GestureRecorderListener {
 
     private static final String TAG = "GestureRecListenerImpl";
@@ -41,14 +34,12 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
     private Set<IGestureRecognitionListener> listeners;
 
     private BluetoothUtilityOps bluetoothOps;
-    private Service service;
 
     public GestureRecorderListenerImpl(Service service, GestureRecorder recorder) {
-        this.service = service;
         this.listeners = new HashSet<>();
         this.recorder = recorder;
         classifier = new GestureClassifier(new NormedGridExtractor(), service);
-        this.bluetoothOps = BluetoothUtilityOps.getInstance((GestureRecognitionService) service);
+        this.bluetoothOps = BluetoothUtilityOps.getInstance(service);
     }
 
     @Override
@@ -82,8 +73,8 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
 
                 if (distribution.getBestDistance() < SalvePreferences.GESTURE_IDENTIFICATION_THRESHOLD) {
 
-                    //TODO
-                    //sendContactViaBluetooth();
+                    //TODO enable this to send contact (via bluetooth) upon handshake
+                    bluetoothOps.sendContactViaBluetooth();
 
                     for (IGestureRecognitionListener listener : listeners) {
                         try {
@@ -94,22 +85,6 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
                     }
                 }
             }
-        }
-    }
-
-    private void sendContactViaBluetooth() {
-        ensureDiscoverable();
-        bluetoothOps.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
-        bluetoothOps.queryDevices();
-    }
-
-    private void ensureDiscoverable() {
-        BluetoothAdapter mBluetoothAdapter = bluetoothOps.getBluetoothAdapter();
-        if (mBluetoothAdapter.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            service.startActivity(discoverableIntent);
         }
     }
 
@@ -207,7 +182,9 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
         Log.e(TAG, "Starting classification for " + trainingSetName);
         activeTrainingSet = trainingSetName;
         isClassifying = true;
-        recorder.start();
-        classifier.loadTrainingSet(trainingSetName);
+        if (recorder != null && classifier != null) {
+            recorder.start();
+            classifier.loadTrainingSet(trainingSetName);
+        }
     }
 }

@@ -34,10 +34,13 @@ public class StopServiceReceiver extends BroadcastReceiver implements IBandDisco
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e(TAG, "onReceive called. Service will be stopped");
-
-        BandPendingResult<Void> pendingResult = mBandClient.disconnect();
-        BandDisconnectTask disconnectionTask = new BandDisconnectTask(this);
-        disconnectionTask.execute(pendingResult);
+        if (mBandClient != null) {
+            BandPendingResult<Void> pendingResult = mBandClient.disconnect();
+            BandDisconnectTask disconnectionTask = new BandDisconnectTask(this);
+            disconnectionTask.execute(pendingResult);
+        } else {
+            onFinishedConnection(null);
+        }
     }
 
     @Override
