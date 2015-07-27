@@ -66,7 +66,7 @@ public class BluetoothUtilityOps {
         mBluetoothService = new BluetoothService(this);
     }
 
-    public void queryDevices() {
+    private void queryDevices() {
 
         // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -168,7 +168,7 @@ public class BluetoothUtilityOps {
     }
 
     public void sendContactViaBluetooth() {
-        ensureDiscoverable();
+        this.ensureDiscoverable();
         this.setSendingContact(true);
         this.changeBluetoothDeviceName(BluetoothAdapterName.CHANGE);
         this.queryDevices();

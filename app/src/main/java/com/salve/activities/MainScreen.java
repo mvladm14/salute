@@ -1,32 +1,30 @@
 package com.salve.activities;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.daimajia.swipe.util.Attributes;
 import com.microsoft.band.ConnectionState;
 import com.salve.R;
-import com.salve.activities.adapters.ContactsListViewAdapter;
 import com.salve.activities.navigation.NavigationManager;
+import com.salve.activities.operations.MainScreenOpsImpl;
 import com.salve.band.tasks.BandConnectionAsyncResponseImpl;
 
 public class MainScreen extends AppCompatActivity {
 
     private static final String TAG = "MainScreen";
 
-    private ConnectionState connectionState;
+    private MainScreenOpsImpl screenOps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
+        ConnectionState connectionState = null;
 
         Log.e(TAG, "onCreate() called");
         Bundle extras = getIntent().getExtras();
@@ -34,6 +32,8 @@ public class MainScreen extends AppCompatActivity {
             connectionState = (ConnectionState) extras.getSerializable(BandConnectionAsyncResponseImpl.BAND_CONNECTION_STATUS);
             Log.e(TAG, "Band ConnectionState is: " + connectionState + "");
         }
+
+        screenOps = new MainScreenOpsImpl(this, connectionState);
 
         initializeFields();
     }
@@ -44,26 +44,11 @@ public class MainScreen extends AppCompatActivity {
     }
 
     private void initializeUIFields() {
-
-        TextView mainScreenStatusMessage = (TextView) findViewById(R.id.mainScreenStatusMessage);
-        TextView mainScreenInformationMessage = (TextView) findViewById(R.id.mainScreenInformationMessage);
-        ListView mContactsListView = (ListView) findViewById(R.id.contacts_list_view);
-
-        if (connectionState == ConnectionState.CONNECTED) {
-            mainScreenStatusMessage.setText(getString(R.string.wearableIsConnected));
-            mainScreenInformationMessage.setText(getString(R.string.mainScreenInfoMessageOnBandConnected));
-        } else {
-            mainScreenStatusMessage.setText(getString(R.string.wearableIsNotConnected));
-            mainScreenStatusMessage.setTextColor(Color.RED);
-            mainScreenInformationMessage.setText(getString(R.string.mainScreenInfoMessageOnBandNotConnected));
-        }
-
-        ContactsListViewAdapter mContactsListAdapter = new ContactsListViewAdapter(this);
-        mContactsListView.setAdapter(mContactsListAdapter);
-        mContactsListAdapter.setMode(Attributes.Mode.Single);
+        screenOps.initializeUIFields();
     }
 
     private void initializeNonUIFields() {
+
     }
 
     @Override

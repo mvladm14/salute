@@ -12,6 +12,8 @@ import com.salve.agrf.gestures.classifier.Distribution;
 import com.salve.agrf.gestures.classifier.GestureClassifier;
 import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
 import com.salve.bluetooth.BluetoothUtilityOps;
+import com.salve.contacts.ContactInformation;
+import com.salve.contacts.ContactsFileManager;
 import com.salve.preferences.SalvePreferences;
 
 import java.util.HashSet;
@@ -35,7 +37,10 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
 
     private BluetoothUtilityOps bluetoothOps;
 
+    private Service mService;
+
     public GestureRecorderListenerImpl(Service service, GestureRecorder recorder) {
+        this.mService = service;
         this.listeners = new HashSet<>();
         this.recorder = recorder;
         classifier = new GestureClassifier(new NormedGridExtractor(), service);
@@ -170,6 +175,13 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
         @Override
         public boolean isLearning() throws RemoteException {
             return isLearning;
+        }
+
+        @Override
+        public List<ContactInformation> getContacts() throws RemoteException {
+            ContactsFileManager contactsFileManager = new ContactsFileManager(mService);
+            List<ContactInformation> contacts = contactsFileManager.readImportedContacts();
+            return contacts;
         }
 
         @Override

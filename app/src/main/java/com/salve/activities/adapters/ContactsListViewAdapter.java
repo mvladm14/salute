@@ -4,20 +4,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.salve.R;
+import com.salve.contacts.ContactInformation;
 
-/**
- * Created by Vlad on 7/16/2015.
- */
+import java.util.List;
+
 public class ContactsListViewAdapter extends BaseSwipeAdapter {
 
     private Context mContext;
+    private List<ContactInformation> contacts;
 
-    public ContactsListViewAdapter(Context mContext) {
+    public ContactsListViewAdapter(Context mContext, List<ContactInformation> contacts) {
         this.mContext = mContext;
+        this.contacts = contacts;
     }
 
     @Override
@@ -32,19 +35,19 @@ public class ContactsListViewAdapter extends BaseSwipeAdapter {
         swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
         swipeLayout.addDrag(SwipeLayout.DragEdge.Left, swipeLayout.findViewById(R.id.bottom_wrapper_left));
         swipeLayout.addDrag(SwipeLayout.DragEdge.Right, swipeLayout.findViewById(R.id.bottom_wrapper_right));
-
         return v;
     }
 
     @Override
     public void fillValues(int position, View view) {
-//        TextView t = (TextView)view.findViewById(R.id.position);
-//        t.setText((position + 1) + ".");
+        SwipeLayout swipeLayout = (SwipeLayout) view.findViewById(getSwipeLayoutResourceId(position));
+        TextView textView = (TextView) swipeLayout.getSurfaceView().findViewById(R.id.contact_details);
+        textView.setText(contacts.get(position).toString());
     }
 
     @Override
     public int getCount() {
-        return 30;
+        return contacts.size();
     }
 
     @Override
@@ -55,5 +58,9 @@ public class ContactsListViewAdapter extends BaseSwipeAdapter {
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public void setContacts(List<ContactInformation> contacts) {
+        this.contacts = contacts;
     }
 }

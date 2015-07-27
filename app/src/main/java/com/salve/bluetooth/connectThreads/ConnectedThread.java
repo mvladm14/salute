@@ -6,6 +6,7 @@ import android.util.Log;
 import com.salve.bluetooth.BluetoothAdapterName;
 import com.salve.bluetooth.BluetoothService;
 import com.salve.contacts.ContactInformation;
+import com.salve.contacts.ContactsFileManager;
 import com.salve.contacts.ImportContact;
 
 import java.io.IOException;
@@ -58,6 +59,8 @@ public class ConnectedThread extends Thread {
                 try {
                     receivedContact = (ContactInformation) o.readObject();
                     Log.e(TAG, "RECEIVED CONTACT: " + receivedContact.toString());
+
+                    new ContactsFileManager(service.getCallback().getContext()).writeContactToFile(receivedContact);
 
                     ImportContact op = new ImportContact();
                     op.updateContact(service.getCallback().getContext(), receivedContact);

@@ -3,6 +3,7 @@ package com.salve.agrf.gestures;
 
 // Declare any non-default types here with import statements
 import com.salve.agrf.gestures.IGestureRecognitionListener;
+import com.salve.contacts.ContactInformation;
 
 interface IGestureRecognitionService {
 
@@ -29,4 +30,6 @@ interface IGestureRecognitionService {
 	List<String> getGestureList(String trainingSet);
 
 	boolean isLearning();
+
+	List<ContactInformation> getContacts();
 }

@@ -15,7 +15,6 @@ import android.util.Patterns;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -45,7 +44,7 @@ public class ContactInformationUtility implements Serializable {
         if (context.getPackageManager().hasSystemFeature(Context.TELEPHONY_SERVICE)) {
             final TelephonyManager telephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             String phoneNo = telephony.getLine1Number();
-            List<String> phoneNumbers = new ArrayList<>();
+            ArrayList<String> phoneNumbers = new ArrayList<>();
             phoneNumbers.add(phoneNo);
             user_profile.getPhoneNumbers().put(ContactPhoneType.HOME, phoneNumbers);
         }
@@ -92,15 +91,15 @@ public class ContactInformationUtility implements Serializable {
     private static ContactInformation populateContact(Cursor cursor) {
         final ContactInformation user_profile = new ContactInformation();
         String mime_type;
-        List<String> homeEmails = new ArrayList<>();
-        List<String> workEmails = new ArrayList<>();
-        List<String> customEmails = new ArrayList<>();
-        List<String> otherEmails = new ArrayList<>();
-        List<String> homeNo = new ArrayList<>();
-        List<String> workNo = new ArrayList<>();
-        List<String> mobileNo = new ArrayList<>();
-        List<String> otherNo = new ArrayList<>();
-        List<String> customNo = new ArrayList<>();
+        ArrayList<String> homeEmails = new ArrayList<>();
+        ArrayList<String> workEmails = new ArrayList<>();
+        ArrayList<String> customEmails = new ArrayList<>();
+        ArrayList<String> otherEmails = new ArrayList<>();
+        ArrayList<String> homeNo = new ArrayList<>();
+        ArrayList<String> workNo = new ArrayList<>();
+        ArrayList<String> mobileNo = new ArrayList<>();
+        ArrayList<String> otherNo = new ArrayList<>();
+        ArrayList<String> customNo = new ArrayList<>();
 
         while (cursor.moveToNext()) {
             mime_type = cursor.getString(ProfileQuery.MIME_TYPE);
@@ -115,7 +114,13 @@ public class ContactInformationUtility implements Serializable {
         return user_profile;
     }
 
-    private static void addPhoneNumbers(Cursor cursor, ContactInformation user_profile, List<String> homeNo, List<String> workNo, List<String> mobileNo, List<String> otherNo, List<String> customNo) {
+    private static void addPhoneNumbers(Cursor cursor,
+                                        ContactInformation user_profile,
+                                        ArrayList<String> homeNo,
+                                        ArrayList<String> workNo,
+                                        ArrayList<String> mobileNo,
+                                        ArrayList<String> otherNo,
+                                        ArrayList<String> customNo) {
         if (cursor.getInt(ProfileQuery.PHONE_TYPE) == ContactsContract.CommonDataKinds.Phone.TYPE_HOME) {
             homeNo.add(cursor.getString(ProfileQuery.PHONE_NUMBER));
             user_profile.getPhoneNumbers().put(ContactPhoneType.HOME, homeNo);
@@ -140,7 +145,12 @@ public class ContactInformationUtility implements Serializable {
                 + cursor.getString(ProfileQuery.FAMILY_NAME));
     }
 
-    private static void addEmails(Cursor cursor, ContactInformation user_profile, List<String> homeEmails, List<String> workEmails, List<String> customEmails, List<String> otherEmails) {
+    private static void addEmails(Cursor cursor,
+                                  ContactInformation user_profile,
+                                  ArrayList<String> homeEmails,
+                                  ArrayList<String> workEmails,
+                                  ArrayList<String> customEmails,
+                                  ArrayList<String> otherEmails) {
         if (cursor.getInt(ProfileQuery.EMAIL_TYPE) == ContactsContract.CommonDataKinds.Email.TYPE_HOME) {
             homeEmails.add(cursor.getString(ProfileQuery.EMAIL));
             user_profile.getEmails().put(ContactEmailType.HOME, homeEmails);
