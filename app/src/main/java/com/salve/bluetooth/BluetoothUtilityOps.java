@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import com.salve.contacts.ContactInformation;
+import com.salve.exceptions.bluetooth.BluetoothNotEnabledException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class BluetoothUtilityOps {
     private BluetoothService mBluetoothService;
     private boolean sendingContact;
 
-    public static BluetoothUtilityOps getInstance(Context context) {
+    public static BluetoothUtilityOps getInstance(Context context) throws BluetoothNotEnabledException {
         synchronized (BluetoothUtilityOps.class) {
             if (instance == null) {
                 instance = new BluetoothUtilityOps(context);
@@ -39,26 +40,31 @@ public class BluetoothUtilityOps {
         return instance;
     }
 
-    private BluetoothUtilityOps(Context context) {
+    private BluetoothUtilityOps(Context context) throws BluetoothNotEnabledException {
         this();
         this.context = context;
     }
 
-    private BluetoothUtilityOps() {
+    private BluetoothUtilityOps() throws BluetoothNotEnabledException {
         Log.e(TAG, "instance created");
         mNewDevicesArrayList = new ArrayList<>();
         pairedDevicesArrayList = new ArrayList<>();
         allFoundDevicesArrayList = new ArrayList<>();
+
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothOldDeviceName = mBtAdapter.getName();
-        sendingContact = false;
-        if (mBluetoothService == null) {
-            setupBluetooth();
-        }
-        Log.e(TAG, "Bluetooth service state is: " + mBluetoothService.getState());
-        if (mBluetoothService.getState() == ConnectionStateEnum.STATE_NONE) {
-            // Start the Bluetooth chat services
-            mBluetoothService.start();
+        if (!mBtAdapter.isEnabled()) {
+            throw new BluetoothNotEnabledException();
+        } else {
+            bluetoothOldDeviceName = mBtAdapter.getName();
+            sendingContact = false;
+            if (mBluetoothService == null) {
+                setupBluetooth();
+            }
+            Log.e(TAG, "Bluetooth service state is: " + mBluetoothService.getState());
+            if (mBluetoothService.getState() == ConnectionStateEnum.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mBluetoothService.start();
+            }
         }
     }
 

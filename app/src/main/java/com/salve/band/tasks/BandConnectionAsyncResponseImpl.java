@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -12,17 +11,13 @@ import android.util.Log;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.ConnectionState;
-import com.salve.activities.receivers.GestureRecognitionServiceReceiver;
-import com.salve.activities.receivers.StopServiceReceiver;
 import com.salve.agrf.gestures.recorder.GestureRecorder;
 import com.salve.agrf.gestures.recorder.GestureRecorderListener;
 import com.salve.agrf.gestures.recorder.GestureRecorderListenerImpl;
 import com.salve.band.sensors.registration.SensorRegistrationManager;
+import com.salve.broadcastReceivers.GestureRecognitionServiceReceiver;
 import com.salve.preferences.SalvePreferences;
 
-/**
- * Created by Vlad on 7/22/2015.
- */
 public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResponse {
 
     public static final String BAND_CONNECTION_STATUS = "BAND_CONNECTION_STATUS";
@@ -31,13 +26,9 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
 
     private Service service;
 
-    private BandClient bandClient;
-
     private GestureRecorderListener gestureRecorderListener;
 
     private GestureRecorder gestureRecorder;
-
-    private BroadcastReceiver stopServiceReceiver;
 
     public BandConnectionAsyncResponseImpl(Service service) {
         this(service, null);
@@ -45,7 +36,6 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
 
     public BandConnectionAsyncResponseImpl(Service service, BandClient bandClient) {
         this.service = service;
-        this.bandClient = bandClient;
 
         SensorRegistrationManager sensorRegistrationManager = new SensorRegistrationManager(bandClient);
         this.gestureRecorder = new GestureRecorder(sensorRegistrationManager);
@@ -67,8 +57,6 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
             }
         }
 
-        registerReceiverToStopService();
-
         sendBroadcastWithBandConnectionState(connectionState);
     }
 
@@ -80,16 +68,6 @@ public class BandConnectionAsyncResponseImpl implements IBandConnectionAsyncResp
     @Override
     public void unregisterListener() {
         gestureRecorder.unregisterListener(gestureRecorderListener);
-    }
-
-    @Override
-    public void unregisterStopReceiver() {
-        service.unregisterReceiver(stopServiceReceiver);
-    }
-
-    private void registerReceiverToStopService() {
-        stopServiceReceiver = new StopServiceReceiver(service, bandClient);
-        service.registerReceiver(stopServiceReceiver, new IntentFilter(StopServiceReceiver.RECEIVER_FILTER));
     }
 
     private void sendBroadcastWithBandConnectionState(ConnectionState connectionState) {

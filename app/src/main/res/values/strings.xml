@@ -29,7 +29,7 @@
     <string name="mainScreenInfoMessageOnBandConnected">You can shake hands with your friends and we
         will help you stay in touch.</string>
     <string name="mainScreenInfoMessageOnBandNotConnected">In order to keep in touch with your
-        friends, please make sure a connection is established between your wearable and your phone.</string>
+        friends, please make sure a Bluetooth connection is established between your wearable and your phone.</string>
     <string name="wearableIsConnected">Wearable is connected.</string>
     <string name="wearableIsNotConnected">Wearable is not connected</string>
     <string name="mainScreenSwipeMessage">Swipe to delete or import</string>

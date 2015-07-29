@@ -10,11 +10,11 @@ import com.microsoft.band.BandPendingResult;
 import com.microsoft.band.ConnectionState;
 import com.salve.band.tasks.BandConnectionAsyncResponseImpl;
 import com.salve.band.tasks.BandConnectionTask;
+import com.salve.band.tasks.BandDisconnectTask;
+import com.salve.band.tasks.BandDisconnectionAsyncResponseImpl;
 import com.salve.band.tasks.IBandConnectionAsyncResponse;
+import com.salve.band.tasks.IBandDisconnectionAsyncResponse;
 
-/**
- * Created by Vlad on 7/22/2015.
- */
 public class BandConnectionManager {
 
     private Service service;
@@ -22,6 +22,7 @@ public class BandConnectionManager {
     private BandClient bandClient;
 
     private IBandConnectionAsyncResponse bandConnectionAsyncResponse;
+    private IBandDisconnectionAsyncResponse bandDisconnectionAsyncResponse;
 
     public BandConnectionManager(Service service) {
         this.service = service;
@@ -36,6 +37,7 @@ public class BandConnectionManager {
             bandClient = BandClientManager.getInstance().create(service, pairedBands[0]);
 
             bandConnectionAsyncResponse = new BandConnectionAsyncResponseImpl(service, bandClient);
+            bandDisconnectionAsyncResponse = new BandDisconnectionAsyncResponseImpl(service, bandClient);
 
             connect();
 
@@ -60,13 +62,17 @@ public class BandConnectionManager {
         }
     }
 
-    public void unregisterStopReceiver() {
-        if (bandConnectionAsyncResponse != null) {
-            bandConnectionAsyncResponse.unregisterStopReceiver();
-        }
-    }
-
     public IBinder getBinder() {
         return bandConnectionAsyncResponse.getBinder();
+    }
+
+    public BandClient getBandClient() {
+        return bandClient;
+    }
+
+    public void disconnectFromBand() {
+        BandPendingResult<Void> pendingResult = bandClient.disconnect();
+        BandDisconnectTask disconnectionTask = new BandDisconnectTask(bandDisconnectionAsyncResponse);
+        disconnectionTask.execute(pendingResult);
     }
 }

@@ -11,6 +11,7 @@ import com.salve.R;
 import com.salve.bluetooth.BluetoothDevicesFoundResponse;
 import com.salve.bluetooth.BluetoothUtilityOps;
 import com.salve.contacts.ContactInformation;
+import com.salve.exceptions.bluetooth.BluetoothNotEnabledException;
 
 import java.util.List;
 
@@ -24,7 +25,11 @@ public class TestingActivity extends AppCompatActivity implements BluetoothDevic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testing);
-        bluetoothOps = BluetoothUtilityOps.getInstance(this);
+        try {
+            bluetoothOps = BluetoothUtilityOps.getInstance(this);
+        } catch (BluetoothNotEnabledException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

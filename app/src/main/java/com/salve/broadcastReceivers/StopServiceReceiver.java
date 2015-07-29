@@ -1,4 +1,4 @@
-package com.salve.activities.receivers;
+package com.salve.broadcastReceivers;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -13,9 +13,6 @@ import com.salve.activities.commands.SendNotificationCommand;
 import com.salve.band.tasks.BandDisconnectTask;
 import com.salve.band.tasks.IBandDisconnectionAsyncResponse;
 
-/**
- * Created by Vlad on 7/20/2015.
- */
 public class StopServiceReceiver extends BroadcastReceiver implements IBandDisconnectionAsyncResponse {
 
     private static final String TAG = "StopServiceReceiver";

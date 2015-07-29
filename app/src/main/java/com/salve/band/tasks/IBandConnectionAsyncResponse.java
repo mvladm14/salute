@@ -13,7 +13,5 @@ public interface IBandConnectionAsyncResponse {
 
     void unregisterListener();
 
-    void unregisterStopReceiver();
-
     IBinder getBinder();
 }

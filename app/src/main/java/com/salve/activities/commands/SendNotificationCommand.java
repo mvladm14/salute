@@ -10,7 +10,7 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.salve.R;
-import com.salve.activities.receivers.StopServiceReceiver;
+import com.salve.broadcastReceivers.StopServiceReceiver;
 
 /**
  * Created by Vlad on 7/20/2015.

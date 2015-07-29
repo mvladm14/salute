@@ -14,6 +14,7 @@ import com.salve.agrf.gestures.classifier.featureExtraction.NormedGridExtractor;
 import com.salve.bluetooth.BluetoothUtilityOps;
 import com.salve.contacts.ContactInformation;
 import com.salve.contacts.ContactsFileManager;
+import com.salve.exceptions.bluetooth.BluetoothNotEnabledException;
 import com.salve.preferences.SalvePreferences;
 
 import java.util.HashSet;
@@ -44,7 +45,11 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
         this.listeners = new HashSet<>();
         this.recorder = recorder;
         classifier = new GestureClassifier(new NormedGridExtractor(), service);
-        this.bluetoothOps = BluetoothUtilityOps.getInstance(service);
+        try {
+            this.bluetoothOps = BluetoothUtilityOps.getInstance(service);
+        } catch (BluetoothNotEnabledException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
