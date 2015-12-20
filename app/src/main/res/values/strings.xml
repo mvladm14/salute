@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Salve</string>
+    <string name="app_name">Salute!</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="menu_preferences">Preferences</string>
     <string name="title_activity_loading_screen">LoadingScreen</string>
-    <string name="loadingScreenSalve">Salve!</string>
+    <string name="loadingScreenSalve">Salute!</string>
     <string name="loadingScreenBeInTouch">Be in Touch</string>
-    <string name="title_activity_main_screen">Salve!</string>
+    <string name="title_activity_main_screen">Salute!</string>
     <string name="mainScreenInformationMessage">Information Message Here</string>
     <string name="mainScreenStatusMessage">MainScreen</string>
 
@@ -30,8 +30,8 @@
         will help you stay in touch.</string>
     <string name="mainScreenInfoMessageOnBandNotConnected">In order to keep in touch with your
         friends, please make sure a Bluetooth connection is established between your wearable and your phone.</string>
-    <string name="wearableIsConnected">Wearable is connected.</string>
-    <string name="wearableIsNotConnected">Wearable is not connected</string>
+    <string name="wearableIsConnected">Connected.</string>
+    <string name="wearableIsNotConnected"> Not connected</string>
     <string name="mainScreenSwipeMessage">Swipe to delete or import</string>
 
 

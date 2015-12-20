@@ -46,9 +46,9 @@ public class ConnectedThread extends Thread {
     public void run() {
         Log.e(TAG, "BEGIN mConnectedThread");
 
-        if (service.getCallback().isSendingContact()) {
+        //if (service.getCallback().isSendingContact()) {
             service.getCallback().sendMyContact();
-        }
+        //}
 
         // Keep listening to the InputStream while connected
         while (true) {
@@ -62,8 +62,8 @@ public class ConnectedThread extends Thread {
 
                     new ContactsFileManager(service.getCallback().getContext()).writeContactToFile(receivedContact);
 
-                    ImportContact op = new ImportContact();
-                    op.updateContact(service.getCallback().getContext(), receivedContact);
+                    //ImportContact op = new ImportContact();
+                    //op.updateContact(service.getCallback().getContext(), receivedContact);
                     service.getCallback().changeBluetoothDeviceName(BluetoothAdapterName.RESTORE);
                     service.connectionLost();
                 } catch (ClassNotFoundException e) {

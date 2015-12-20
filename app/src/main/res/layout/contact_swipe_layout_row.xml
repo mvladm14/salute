@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.daimajia.swipe.SwipeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipe"
     android:layout_width="match_parent"
@@ -21,6 +20,7 @@
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:background="@drawable/red"
+            android:onClick="RemoveContact"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
             android:src="@drawable/trash" />
@@ -37,21 +37,33 @@
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:background="#4cd964"
+            android:onClick="AddContact"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
             android:src="@drawable/add_contact_icon" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/contact_details"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/white"
-        android:padding="10dp"
-        android:tag="Hover"
-        android:text="Contact Info here - summary">
-    </TextView>
+        android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/contact_details"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white"
+            android:gravity="center"
+            android:padding="10dp"
+            android:tag="Hover"
+            android:text="Contact Info here - summary"></TextView>
+
+        <ImageView
+            android:id="@+id/contact_feeling"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"></ImageView>
+    </LinearLayout>
 
 
 </com.daimajia.swipe.SwipeLayout>

@@ -24,6 +24,21 @@ public class ContactsFileManager {
         this.mContext = context;
     }
 
+    public void updateContactsFile(List<ContactInformation> contacts) {
+        Log.e(TAG,"Update contacts file");
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(mContext.getExternalFilesDir(null), CONTACTS_FILE + ".gst").toString());
+            ObjectOutputStream o = new ObjectOutputStream(fos);
+            o.writeObject(contacts);
+
+            o.close();
+            fos.close();
+        } catch (IOException e) {
+            Log.e(TAG, e.toString() + "from writeContactToFile");
+            e.printStackTrace();
+        }
+    }
+
     public void writeContactToFile(ContactInformation contactInformation) {
 
         Log.e(TAG, "writeContactToFile().");

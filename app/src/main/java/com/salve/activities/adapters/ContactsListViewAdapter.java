@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
@@ -42,7 +43,11 @@ public class ContactsListViewAdapter extends BaseSwipeAdapter {
     public void fillValues(int position, View view) {
         SwipeLayout swipeLayout = (SwipeLayout) view.findViewById(getSwipeLayoutResourceId(position));
         TextView textView = (TextView) swipeLayout.getSurfaceView().findViewById(R.id.contact_details);
-        textView.setText(contacts.get(position).toString());
+        textView.setText(contacts.get(position).getName());
+
+        ImageView imageView = (ImageView) swipeLayout.getSurfaceView().findViewById(R.id.contact_feeling);
+        imageView.setImageResource(contacts.get(position).getHeartRate() > 0.7 ?
+                R.drawable.interested : R.drawable.bored);
     }
 
     @Override

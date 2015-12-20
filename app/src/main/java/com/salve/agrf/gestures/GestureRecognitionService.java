@@ -57,7 +57,6 @@ public class GestureRecognitionService extends Service implements BluetoothDevic
 
         new SendNotificationCommand(this).execute();
         bandConnectionManager.connectToBand();
-
         return START_STICKY;
     }
 
@@ -89,7 +88,7 @@ public class GestureRecognitionService extends Service implements BluetoothDevic
     @Override
     public void onBluetoothDevicesFound(List<BluetoothDevice> devices) {
         for (BluetoothDevice device : devices) {
-            if (device.getName() != null && device.getName().equals(bluetoothOps.getDeviceName())) {
+            if (device.getName() != null && device.getName().equalsIgnoreCase(bluetoothOps.getDeviceName())) {
                 Log.e(TAG, "HAVE THE SAME NAME ==> try to connect");
                 bluetoothOps.connectDevice(device.getAddress());
             }

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.microsoft.band.ConnectionState;
 import com.salve.R;
@@ -78,5 +79,14 @@ public class MainScreen extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void AddContact(View view) {
+        Log.e(TAG,"Adding new contact");
+        screenOps.addContact(view);
+    }
+    public void RemoveContact(View view) {
+        Log.e(TAG,"removing new contact");
+        screenOps.removeContact(view);
     }
 }
