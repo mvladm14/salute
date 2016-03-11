@@ -7,9 +7,6 @@ import com.salve.activities.LoadingScreen;
 import com.salve.broadcastReceivers.GestureRecognitionServiceReceiver;
 import com.salve.agrf.gestures.GestureRecognitionService;
 
-/**
- * Created by Vlad on 6/24/2015.
- */
 public class LoadingScreenOpsImpl {
 
     private static final String TAG = "LoadingScreenOpsImpl";

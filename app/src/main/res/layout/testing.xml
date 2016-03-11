@@ -15,20 +15,17 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/button100"
+            android:id="@+id/sendContactViaBluetoothButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="sendContactViaBluetooth"
             android:text="sendContactViaBluetooth" />
 
         <Button
-            android:id="@+id/button101"
+            android:id="@+id/getMyContactButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getMyContact"
             android:text="getMyContact" />
 
     </LinearLayout>
-
 
 </RelativeLayout>

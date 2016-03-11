@@ -10,9 +10,6 @@ import com.microsoft.band.ConnectionState;
 import com.salve.activities.MainScreen;
 import com.salve.band.tasks.BandConnectionAsyncResponseImpl;
 
-/**
- * Created by Vlad on 7/17/2015.
- */
 public class GestureRecognitionServiceReceiver extends BroadcastReceiver {
 
     private static final String TAG = "GestureRecSvcReceiver";

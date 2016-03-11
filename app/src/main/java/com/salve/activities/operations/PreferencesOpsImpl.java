@@ -3,7 +3,6 @@ package com.salve.activities.operations;
 import android.util.SparseArray;
 
 import com.salve.R;
-import com.salve.activities.Preferences;
 import com.salve.activities.models.PreferencesModel;
 import com.salve.activities.models.SocialGroup;
 

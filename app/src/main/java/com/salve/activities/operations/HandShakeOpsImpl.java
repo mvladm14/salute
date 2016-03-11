@@ -1,84 +1,68 @@
 package com.salve.activities.operations;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
-import android.os.RemoteException;
+import android.media.Image;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.salve.R;
-import com.salve.activities.HandShake;
-import com.salve.activities.asyncReplies.IGestureConnectionServiceAsyncReply;
 import com.salve.activities.operations.listeners.handshake.AlertDialogOnShowListener;
-import com.salve.agrf.gestures.GestureConnectionService;
-import com.salve.agrf.gestures.GestureRecognitionService;
-import com.salve.agrf.gestures.IGestureRecognitionListener;
-import com.salve.agrf.gestures.classifier.Distribution;
+import com.salve.fragments.HandShakeFragment;
+import com.salve.activities.operations.listeners.handshake.GestureLearnedTextViewTextChangedListener;
+import com.salve.activities.operations.listeners.handshake.GestureRadioButtonCheckedChangedListener;
+import com.salve.listeners.fragment.OnHandShakeFragmentListener;
 import com.salve.preferences.SalvePreferences;
-import com.salve.tasks.UpdateHandshakeTask;
 
-/**
- * Created by Vlad on 7/18/2015.
- */
-public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class HandShakeOpsImpl implements View.OnClickListener {
 
     private static final String TAG = "HandShakeOpsImpl";
 
-    private IBinder gestureListenerStub;
-    private GestureConnectionService gestureConnectionService;
-    private Activity mActivity;
+    private Fragment mFragment;
 
-    public HandShakeOpsImpl(Activity activity) {
+    private View mRootView;
+    private RadioButton myOwnGesture;
+    private RadioButton defaultGesture;
+    private TextView gestureLearnedTextView;
+    private OnHandShakeFragmentListener fragmentCallback;
 
-        this.mActivity = activity;
+    public HandShakeOpsImpl(Fragment activity, View rootView) {
+        this.mFragment = activity;
+        this.mRootView = rootView;
+    }
 
-        gestureConnectionService = new GestureConnectionService(this);
-
-        gestureListenerStub = new IGestureRecognitionListener.Stub() {
-
-            @Override
-            public void onGestureLearned(String gestureName) throws RemoteException {
-                Log.e(TAG, String.format("%s learned", gestureName));
-                new UpdateHandshakeTask((HandShake) mActivity).execute();
-
-                Context ctx = mActivity.getApplicationContext();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-                if (prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true)) {
-                    restartClassification(prefs.getString(SalvePreferences.DEFAULT_GESTURE, SalvePreferences.DEFAULT_GESTURE));
-                } else if (prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, true)) {
-                    restartClassification(prefs.getString(SalvePreferences.MY_OWN_GESTURE, SalvePreferences.MY_OWN_GESTURE));
-                }
-
-            }
-
-            @Override
-            public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-                Log.e(TAG, String.format("Training set %s deleted", trainingSet));
-            }
-
-            @Override
-            public void onGestureRecognized(final Distribution distribution) throws RemoteException {
-                Log.e(TAG, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
-            }
-        };
-
-        Intent bindIntent = new Intent(mActivity, GestureRecognitionService.class);
-        mActivity.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.trashImageView:
+                deleteGestureData();
+                break;
+            case R.id.handshake_buttonDefineOwnGesture:
+                defineHandShake();
+            default:
+                break;
+        }
     }
 
     public void defineHandShake() {
 
-        final AlertDialog alertDialog = createAlertDialog(mActivity);
-        alertDialog.setOnShowListener(new AlertDialogOnShowListener(alertDialog, gestureConnectionService, mActivity));
+        final AlertDialog alertDialog = createAlertDialog(mFragment.getActivity());
+        alertDialog.setOnShowListener(new AlertDialogOnShowListener(alertDialog, mFragment.getActivity()));
         alertDialog.show();
     }
 
     private AlertDialog createAlertDialog(Activity activity) {
-        String allertDialogMessage =
+        String alertDialogMessage =
                 String.format("%s\n\n%s\n%s\n%s",
                         activity.getString(R.string.handshake_alertDialog_hint),
                         activity.getString(R.string.handshake_alertDialog_instruction1),
@@ -87,55 +71,70 @@ public class HandShakeOpsImpl implements IGestureConnectionServiceAsyncReply {
 
         return new AlertDialog.Builder(activity)
                 .setTitle(R.string.handshake_alertDialog_title)
-                .setMessage(allertDialogMessage)
+                .setMessage(alertDialogMessage)
                 .setPositiveButton(R.string.handshake_alertDialog_start, null)
                 .setNegativeButton(R.string.handshake_alertDialog_cancel, null)
                 .setIcon(R.drawable.handshake)
                 .create();
     }
 
-    @Override
-    public void onServiceConnected() {
-        Log.e(TAG, "Connected to the background service");
-        try {
-            gestureConnectionService
-                    .getRecognitionService()
-                    .registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-            Log.e(TAG, "Listener registered");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onServiceDisconnected() {
-    }
-
-    public void unbindService() {
-        mActivity.unbindService(gestureConnectionService);
-    }
-
     public void deleteGestureData() {
-        try {
-            gestureConnectionService
-                    .getRecognitionService()
-                    .deleteTrainingSet(SalvePreferences.MY_OWN_GESTURE);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        gestureLearnedTextView.setText("");
+        myOwnGesture.setChecked(false);
+        myOwnGesture.setEnabled(false);
+        defaultGesture.setChecked(true);
+        fragmentCallback.deleteGestureData();
+    }
+
+    public void initializeUIFields() {
+
+        ImageView trashImageView = (ImageView) mRootView.findViewById(R.id.trashImageView);
+        myOwnGesture = (RadioButton) mRootView.findViewById(R.id.handshake_myOwnGesture);
+        defaultGesture = (RadioButton) mRootView.findViewById(R.id.handshake_defaultGesture);
+        gestureLearnedTextView = (TextView) mRootView.findViewById(R.id.handshake_gestureLearnedMessage);
+
+        trashImageView.setVisibility(View.INVISIBLE);
+
+        gestureLearnedTextView.addTextChangedListener(new GestureLearnedTextViewTextChangedListener(myOwnGesture, trashImageView));
+
+        Context ctx = mFragment.getActivity().getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        defaultGesture.setChecked(prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true));
+        myOwnGesture.setChecked(prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, false));
+        gestureLearnedTextView.setText(prefs.getString(SalvePreferences.OWN_GESTURE_DEFINE_DATE, ""));
+        myOwnGesture.setOnCheckedChangeListener(
+                new GestureRadioButtonCheckedChangedListener((HandShakeFragment) mFragment, defaultGesture, SalvePreferences.MY_OWN_GESTURE));
+
+        defaultGesture.setOnCheckedChangeListener(
+                new GestureRadioButtonCheckedChangedListener((HandShakeFragment) mFragment, myOwnGesture, SalvePreferences.DEFAULT_GESTURE));
+
+        Button buttonDefineOwnGesture = (Button) mRootView.findViewById(R.id.handshake_buttonDefineOwnGesture);
+        buttonDefineOwnGesture.setOnClickListener(this);
+
+        ImageView deleteOwnData = (ImageView) mRootView.findViewById(R.id.trashImageView);
+        deleteOwnData.setOnClickListener(this);
+    }
+
+    public void onGestureLearned() {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM.dd HH:mm");
+        String currentDateandTime = sdf.format(new Date());
+
+        gestureLearnedTextView.setText(String.format("%s", "Defined on " + currentDateandTime));
+        myOwnGesture.setEnabled(true);
+
+        Context ctx = mFragment.getActivity().getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(SalvePreferences.OWN_GESTURE_DEFINE_DATE, String.format("%s", "Defined on " + currentDateandTime));
+        editor.apply();
     }
 
     public void restartClassification(String activeTrainingSet) {
-        Log.e(TAG, "Restarting classification with new training set: " + activeTrainingSet);
-        try {
-            gestureConnectionService
-                    .getRecognitionService()
-                    .stopClassificationMode();
-            gestureConnectionService
-                    .getRecognitionService()
-                    .startClassificationMode(activeTrainingSet);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        fragmentCallback.restartClassification(activeTrainingSet);
+    }
+
+    public void setFragmentCallback(OnHandShakeFragmentListener fragmentCallback) {
+        this.fragmentCallback = fragmentCallback;
     }
 }

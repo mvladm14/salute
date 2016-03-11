@@ -3,8 +3,6 @@ package com.salve.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.salve.R;
 import com.salve.activities.operations.LoadingScreenOpsImpl;

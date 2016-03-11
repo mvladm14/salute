@@ -1,19 +1,15 @@
 package com.salve.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.salve.activities.HandShake;
+import com.salve.fragments.HandShakeFragment;
 
-/**
- * Created by Vlad on 7/20/2015.
- */
 public class UpdateHandshakeTask extends AsyncTask<Void,Void,Void> {
 
-    private HandShake handShake;
+    private HandShakeFragment handShakeFragment;
 
-    public UpdateHandshakeTask(HandShake handShake) {
-        this.handShake = handShake;
+    public UpdateHandshakeTask(HandShakeFragment handShakeFragment) {
+        this.handShakeFragment = handShakeFragment;
     }
 
     @Override
@@ -23,6 +19,6 @@ public class UpdateHandshakeTask extends AsyncTask<Void,Void,Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        handShake.onGestureLearned();
+        handShakeFragment.onGestureLearned();
     }
 }

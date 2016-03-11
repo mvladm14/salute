@@ -1,6 +1,5 @@
 package com.salve.activities.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -19,19 +18,16 @@ import com.salve.R;
 import com.salve.activities.models.PreferencesModel;
 import com.salve.activities.models.SocialGroup;
 
-/**
- * Created by Vlad on 7/7/2015.
- */
 public class SocialExpandableListAdapter extends BaseExpandableListAdapter {
 
     private final SparseArray<SocialGroup> groups;
     public LayoutInflater inflater;
-    public Activity activity;
+    public Context mContext;
 
-    public SocialExpandableListAdapter(Activity act, SparseArray<SocialGroup> groups) {
-        activity = act;
+    public SocialExpandableListAdapter(Context context, SparseArray<SocialGroup> groups) {
+        mContext = context;
         this.groups = groups;
-        inflater = act.getLayoutInflater();
+        inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
     }
 
     @Override
@@ -61,7 +57,7 @@ public class SocialExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 checkBox.setChecked(b);
-                Context ctx = activity.getApplicationContext();
+                Context ctx = mContext.getApplicationContext();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(text.getText().toString(), b);
@@ -69,7 +65,7 @@ public class SocialExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        Context ctx = activity.getApplicationContext();
+        Context ctx = mContext.getApplicationContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         checkBox.setChecked(prefs.getBoolean(text.getText().toString(), false));
 

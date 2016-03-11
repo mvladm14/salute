@@ -1,26 +1,21 @@
 package com.salve.activities.operations.listeners.handshake;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
-import com.salve.activities.HandShake;
-import com.salve.preferences.SalvePreferences;
+import com.salve.fragments.HandShakeFragment;
 
-/**
- * Created by Vlad on 7/22/2015.
- */
 public class GestureRadioButtonCheckedChangedListener implements CompoundButton.OnCheckedChangeListener {
 
     private RadioButton otherGesture;
     private String salvePreferencesHandshake;
-    private HandShake activity;
+    private HandShakeFragment mHandShakeFragment;
 
-    public GestureRadioButtonCheckedChangedListener(HandShake activity, RadioButton otherGesture, String salvePreferencesHandshake) {
-        this.activity = activity;
+    public GestureRadioButtonCheckedChangedListener(HandShakeFragment fragment, RadioButton otherGesture, String salvePreferencesHandshake) {
+        this.mHandShakeFragment = fragment;
         this.otherGesture = otherGesture;
         this.salvePreferencesHandshake = salvePreferencesHandshake;
     }
@@ -29,9 +24,9 @@ public class GestureRadioButtonCheckedChangedListener implements CompoundButton.
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (b) {
             otherGesture.setChecked(false);
-            activity.restartClassification(salvePreferencesHandshake);
+            mHandShakeFragment.restartClassification(salvePreferencesHandshake);
         }
-        Context ctx = activity.getApplicationContext();
+        Context ctx = mHandShakeFragment.getActivity().getApplicationContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(salvePreferencesHandshake, b);

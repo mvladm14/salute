@@ -66,4 +66,26 @@
     <string name="notification_stopService">Stop</string>
     <string name="notification_message">I am detecting your handshakes in background...</string>
 
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item>Home</item>
+        <item>Favorites</item>
+        <item>Handshake</item>
+        <item>About</item>
+        <item>Testing</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/social</item>
+        <item>@drawable/star_icon</item>
+        <item>@drawable/handshake</item>
+        <item>@drawable/about</item>
+        <item>@drawable/social</item>
+    </array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+
 </resources>
