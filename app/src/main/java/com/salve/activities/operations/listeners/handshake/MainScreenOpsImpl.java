@@ -42,7 +42,6 @@ public class MainScreenOpsImpl implements IGestureConnectionServiceAsyncReply, O
 
         Intent bindIntent = new Intent(mActivity, GestureRecognitionService.class);
         mActivity.bindService(bindIntent, gestureConnectionService, Context.BIND_AUTO_CREATE);
-
         gestureListenerStub = new IGestureRecognitionListener.Stub() {
 
             @Override
@@ -55,7 +54,7 @@ public class MainScreenOpsImpl implements IGestureConnectionServiceAsyncReply, O
                 Context ctx = mActivity.getApplicationContext();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
                 if (prefs.getBoolean(SalvePreferences.DEFAULT_GESTURE, true)) {
-                    restartClassification(prefs.getString(SalvePreferences.DEFAULT_GESTURE, SalvePreferences.DEFAULT_GESTURE));
+                    restartClassification(SalvePreferences.DEFAULT_GESTURE);
                 } else if (prefs.getBoolean(SalvePreferences.MY_OWN_GESTURE, true)) {
                     restartClassification(prefs.getString(SalvePreferences.MY_OWN_GESTURE, SalvePreferences.MY_OWN_GESTURE));
                 }
@@ -64,6 +63,12 @@ public class MainScreenOpsImpl implements IGestureConnectionServiceAsyncReply, O
             @Override
             public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
                 Log.e(TAG, String.format("Training set %s deleted", trainingSet));
+
+                Context ctx = mActivity.getApplicationContext();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(SalvePreferences.OWN_GESTURE_DEFINE_DATE, "");
+                editor.apply();
             }
 
             @Override
@@ -130,5 +135,9 @@ public class MainScreenOpsImpl implements IGestureConnectionServiceAsyncReply, O
 
     public GestureConnectionService getGestureConnectionService() {
         return gestureConnectionService;
+    }
+
+    public void unbindService() {
+        mActivity.unbindService(gestureConnectionService);
     }
 }

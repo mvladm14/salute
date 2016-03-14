@@ -3,9 +3,11 @@ package com.salve.ui_listeners;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.salve.R;
+import com.salve.activities.operations.HomeFragmentOpsImpl;
 
 public class ContactsListViewChangeListener implements View.OnLayoutChangeListener {
 
@@ -29,5 +31,7 @@ public class ContactsListViewChangeListener implements View.OnLayoutChangeListen
             swipeLayout.findViewById(R.id.trash).setOnClickListener(mClickListener);
             swipeLayout.findViewById(R.id.add_contact).setOnClickListener(mClickListener);
         }
+
+        ((HomeFragmentOpsImpl)mClickListener).setContactsTextViewVisible(mListView.getChildCount() == 0);
     }
 }

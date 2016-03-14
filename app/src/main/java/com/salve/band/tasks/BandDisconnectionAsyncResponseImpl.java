@@ -16,7 +16,6 @@ public class BandDisconnectionAsyncResponseImpl implements IBandDisconnectionAsy
         this.bandClient = bandClient;
     }
 
-
     @Override
     public void onFinishedConnection(Void result) {
 

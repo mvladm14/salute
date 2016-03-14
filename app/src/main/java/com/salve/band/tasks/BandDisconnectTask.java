@@ -6,9 +6,6 @@ import android.util.Log;
 import com.microsoft.band.BandException;
 import com.microsoft.band.BandPendingResult;
 
-/**
- * Created by Vlad on 7/20/2015.
- */
 public class BandDisconnectTask extends AsyncTask<BandPendingResult<Void>, Void, Void> {
 
     private static final String TAG = "BandDisconnectTask";
@@ -23,9 +20,7 @@ public class BandDisconnectTask extends AsyncTask<BandPendingResult<Void>, Void,
     protected Void doInBackground(BandPendingResult<Void>... bandPendingResults) {
         try {
             bandPendingResults[0].await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (BandException e) {
+        } catch (InterruptedException | BandException e) {
             e.printStackTrace();
         }
         return null;

@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "BluetoothBroadcastReceiver";
+    private static final String TAG = "BLTBroadcastReceiver";
 
     private Service mService;
 

@@ -80,7 +80,7 @@ public class GestureRecognitionService extends Service implements BluetoothDevic
     public boolean onUnbind(Intent intent) {
         Log.e(TAG, "onUnbind");
 
-        bandConnectionManager.unregisterListnere();
+        bandConnectionManager.unregisterListener();
 
         return super.onUnbind(intent);
     }

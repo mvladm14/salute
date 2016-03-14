@@ -65,10 +65,11 @@ public class GestureClassifier {
 
     @SuppressWarnings("unchecked")
     public void loadTrainingSet(String trainingSetName) {
-        Log.e(TAG, "loadTrainingSet() for " + trainingSetName);
         Log.e(TAG, "Active training set is: " + activeTrainingSet);
+        Log.e(TAG, "loadTrainingSet() for " + trainingSetName);
         if (!trainingSetName.equals(activeTrainingSet)) {
             activeTrainingSet = trainingSetName;
+            Log.e(TAG, "Active training set is: " + activeTrainingSet);
             FileInputStream input;
             ObjectInputStream o;
             try {
@@ -87,7 +88,6 @@ public class GestureClassifier {
                 e.printStackTrace();
                 trainingSet = new ArrayList<>();
             }
-//            }
         }
     }
 
@@ -111,13 +111,14 @@ public class GestureClassifier {
         if (activeTrainingSet != null && activeTrainingSet.equals(trainingSetName)) {
             trainingSet = new ArrayList<>();
         }
-        // File file = new File("\\sdcard\\" + activeTrainingSet + ".gst");
-        // if (file.exists()) {
-        // file.delete();
-        // return true;
-        // }
-        // return false;
-        return context.deleteFile(activeTrainingSet + ".gst");
+        File file = new File(context.getExternalFilesDir(null), trainingSetName + ".gst");
+        if (file.exists()) {
+            file.delete();
+            return true;
+        }
+        return false;
+        //return context.getExternalFilesDir(null).delete();
+        //return context.deleteFile(trainingSetName + ".gst");
 
     }
 

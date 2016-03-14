@@ -104,6 +104,7 @@ public class GestureRecorderListenerImpl implements GestureRecorderListener {
 
         @Override
         public void deleteTrainingSet(String trainingSetName) throws RemoteException {
+            Log.e(TAG,String.format("Total listeners = %d\n",listeners.size()));
             if (classifier.deleteTrainingSet(trainingSetName)) {
                 for (IGestureRecognitionListener listener : listeners) {
                     try {

@@ -135,4 +135,9 @@ public class HomeFragmentOpsImpl implements View.OnClickListener {
         ListView listView = (ListView) rootView.findViewById(R.id.contacts_list_view);
         return listView.getPositionForView(view);
     }
+
+    public void setContactsTextViewVisible(boolean contactsTextViewVisible) {
+        TextView contactsTV = (TextView) rootView.findViewById(R.id.contactsWillAppearHere);
+        contactsTV.setVisibility(contactsTextViewVisible ? View.VISIBLE : View.INVISIBLE);
+    }
 }

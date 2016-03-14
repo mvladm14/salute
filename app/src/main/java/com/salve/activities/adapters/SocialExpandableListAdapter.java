@@ -53,17 +53,27 @@ public class SocialExpandableListAdapter extends BaseExpandableListAdapter {
         text.setText(children.getName());
 
         final CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.preferences_row_checkBox);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                checkBox.setChecked(b);
-                Context ctx = mContext.getApplicationContext();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(text.getText().toString(), b);
-                editor.apply();
-            }
-        });
+        checkBox.setEnabled(false);
+
+        //TODO enable this in a future release
+//        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                checkBox.setChecked(b);
+//                Context ctx = mContext.getApplicationContext();
+//                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+//                SharedPreferences.Editor editor = prefs.edit();
+//                editor.putBoolean(text.getText().toString(), b);
+//                editor.apply();
+//            }
+//        });
+//
+//        convertView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                checkBox.setChecked(!checkBox.isChecked());
+//            }
+//        });
 
         Context ctx = mContext.getApplicationContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -72,12 +82,6 @@ public class SocialExpandableListAdapter extends BaseExpandableListAdapter {
         ImageView imageView = (ImageView) convertView.findViewById(R.id.preferences_row_image);
         imageView.setImageResource(children.getResId());
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBox.setChecked(!checkBox.isChecked());
-            }
-        });
         return convertView;
     }
 

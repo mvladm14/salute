@@ -10,6 +10,7 @@
     <string name="title_activity_main_screen">Salute!</string>
     <string name="mainScreenInformationMessage">Information Message Here</string>
     <string name="mainScreenStatusMessage">MainScreen</string>
+    <string name="mainScreenContactsWillAppearHere">New contacts will appear below.</string>
 
     <!-- Options Menu -->
     <string name="secure_connect">Connect a device - Secure</string>
@@ -43,7 +44,7 @@
     <string name="txtOwnerValueLabel">OwnerValue</string>
     <string name="applicationOwner">SalveLabs</string>
     <string name="aboutFeedbackMessage">For any help / suggestions / feedback please contact us at
-        salve.support@outlook.com</string>
+        salute.support@outlook.com</string>
     <string name="title_activity_hand_shake">HandShake</string>
 
     <!-- HANDSHAKE ACTIVITY -->
@@ -81,7 +82,7 @@
         <item>@drawable/social</item>
         <item>@drawable/star_icon</item>
         <item>@drawable/handshake</item>
-        <item>@drawable/about</item>
+        <item>@drawable/about_icon</item>
         <item>@drawable/social</item>
     </array>
 

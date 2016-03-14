@@ -41,7 +41,7 @@ public class PreferencesOpsImpl {
             socialNetworkPreferencesModels.add(new PreferencesModel("Twitter", R.drawable.twitter));
             socialNetworkPreferencesModels.add(new PreferencesModel("Linkedin", R.drawable.linkedin));
 
-            SocialGroup group = new SocialGroup(new PreferencesModel("Social", R.drawable.social), socialNetworkPreferencesModels);
+            SocialGroup group = new SocialGroup(new PreferencesModel("Social (available soon)", R.drawable.social), socialNetworkPreferencesModels);
             socialGroups.append(j, group);
         }
         return socialGroups;

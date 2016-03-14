@@ -206,6 +206,4 @@ public class ContactInformationUtility implements Serializable {
         // Column index for the PHONE type in the profile query results
         int PHONE_TYPE = 9;
     }
-
-
 }

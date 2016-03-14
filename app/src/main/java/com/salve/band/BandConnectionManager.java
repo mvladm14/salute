@@ -2,6 +2,7 @@ package com.salve.band;
 
 import android.app.Service;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
@@ -17,6 +18,7 @@ import com.salve.band.tasks.IBandDisconnectionAsyncResponse;
 
 public class BandConnectionManager {
 
+    private static final String TAG = "BandConnectionManager";
     private Service service;
 
     private BandClient bandClient;
@@ -46,17 +48,17 @@ public class BandConnectionManager {
             bandConnectionAsyncResponse = new BandConnectionAsyncResponseImpl(service);
 
             bandConnectionAsyncResponse.onFinishedConnection(ConnectionState.UNBOUND);
-
         }
     }
 
     private void connect() {
+        Log.e(TAG, "Connecting to the band");
         BandPendingResult<ConnectionState> pendingResult = bandClient.connect();
         BandConnectionTask connectionTask = new BandConnectionTask(bandConnectionAsyncResponse);
         connectionTask.execute(pendingResult);
     }
 
-    public void unregisterListnere() {
+    public void unregisterListener() {
         if (bandConnectionAsyncResponse != null) {
             bandConnectionAsyncResponse.unregisterListener();
         }

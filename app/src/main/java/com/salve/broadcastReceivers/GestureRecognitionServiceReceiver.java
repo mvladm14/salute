@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.microsoft.band.ConnectionState;
+import com.salve.activities.LoadingScreen;
 import com.salve.activities.MainScreen;
 import com.salve.band.tasks.BandConnectionAsyncResponseImpl;
 
@@ -29,5 +30,6 @@ public class GestureRecognitionServiceReceiver extends BroadcastReceiver {
         Intent mainScreenActivity = new Intent(context, MainScreen.class);
         mainScreenActivity.putExtra(BandConnectionAsyncResponseImpl.BAND_CONNECTION_STATUS, connectionState);
         context.startActivity(mainScreenActivity);
+        ((LoadingScreen)context).finish();
     }
 }
